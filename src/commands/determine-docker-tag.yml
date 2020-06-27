@@ -1,0 +1,14 @@
+parameters:
+  variable:
+    default: DOCKER_TAG
+    description: 'Variable to export to BASH_ENV'
+    type: env_var_name
+steps:
+  -
+    run:
+      name: 'Determine Docker Tag'
+      command: |
+        SHORT_SHA1=$(git rev-parse --short ${CIRCLE_SHA1})
+        DOCKER_TAG=$([[ ! -z "${CIRCLE_TAG}" ]] && echo ${CIRCLE_TAG//\//-}.${SHORT_SHA1} || ([[ ! -z "${CIRCLE_BRANCH}" ]] && echo ${CIRCLE_BRANCH//\//-}.${SHORT_SHA1} || echo ${SHORT_SHA1}))
+        echo "export <<parameters.variable>>=${DOCKER_TAG}" >> ${BASH_ENV}
+        cat ${BASH_ENV}

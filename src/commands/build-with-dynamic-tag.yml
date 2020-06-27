@@ -1,0 +1,64 @@
+description: |
+  Build and tag a Docker image
+parameters:
+  debug:
+    default: false
+    description: |
+      Extra output for orb developers
+    type: boolean
+  dockerfile:
+    default: Dockerfile
+    description: Name of dockerfile to use, defaults to Dockerfile
+    type: string
+  extra_build_args:
+    default: ''
+    description: |
+      Extra flags to pass to docker build. For examples, see https://docs.docker.com/engine/reference/commandline/build
+    type: string
+  image:
+    description: Name of image to build
+    type: string
+  lint-dockerfile:
+    default: false
+    description: |
+      Lint Dockerfile before building?
+    type: boolean
+  path:
+    default: .
+    description: |
+      Path to the directory containing your Dockerfile and build context, defaults to . (working directory)
+    type: string
+  registry:
+    default: docker.io
+    description: |
+      Name of registry to use, defaults to docker.io
+    type: string
+  step-name:
+    default: Docker build
+    description: Specify a custom step name for this command, if desired
+    type: string
+  tag-env:
+    default: CIRCLE_SHA1
+    description: Image tag environment variable name, defaults to CIRCLE_SHA1
+    type: env_var_name
+  treat-warnings-as-errors:
+    default: false
+    description: |
+      If linting Dockerfile, treat linting warnings as errors (would trigger an exist code and fail the CircleCI job)?
+    type: boolean
+steps:
+  - when:
+      condition: <<parameters.lint-dockerfile>>
+      steps:
+        - docker/dockerlint:
+            debug: <<parameters.debug>>
+            dockerfile: <<parameters.path>>/<<parameters.dockerfile>>
+            treat-warnings-as-errors: <<parameters.treat-warnings-as-errors>>
+  - run:
+      command: |
+        docker build \
+          <<#parameters.extra_build_args>><<parameters.extra_build_args>><</parameters.extra_build_args>> \
+          -f <<parameters.path>>/<<parameters.dockerfile>> -t \
+          <<parameters.registry>>/<< parameters.image>>:${<<parameters.tag-env>>} \
+          <<parameters.path>>
+      name: <<parameters.step-name>>

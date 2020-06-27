@@ -1,0 +1,425 @@
+version: 2.1
+
+executors:
+  gg-node:
+    working_directory: ~/repo
+    docker:
+      -
+        image: goodwaygroup/circleci-build-images:node-12
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+
+  gg-eks:
+    working_directory: ~/repo
+    docker:
+      -
+        image: goodwaygroup/circleci-build-images:eks-1.0.0
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+
+orbs:
+  docker: circleci/docker@1.2.1
+  aws-cli: circleci/aws-cli@1.1.0
+  aws-ecr: circleci/aws-ecr@6.9.0
+  my-orb:
+    orbs:
+      docker: circleci/docker@1.2.1
+    commands:
+      build-with-dynamic-tag:
+        description: |
+          Build and tag a Docker image
+        parameters:
+          debug:
+            default: false
+            description: |
+              Extra output for orb developers
+            type: boolean
+          dockerfile:
+            default: Dockerfile
+            description: Name of dockerfile to use, defaults to Dockerfile
+            type: string
+          extra_build_args:
+            default: ""
+            description: |
+              Extra flags to pass to docker build. For examples, see https://docs.docker.com/engine/reference/commandline/build
+            type: string
+          image:
+            description: Name of image to build
+            type: string
+          lint-dockerfile:
+            default: false
+            description: |
+              Lint Dockerfile before building?
+            type: boolean
+          path:
+            default: .
+            description: |
+              Path to the directory containing your Dockerfile and build context, defaults to . (working directory)
+            type: string
+          registry:
+            default: docker.io
+            description: |
+              Name of registry to use, defaults to docker.io
+            type: string
+          step-name:
+            default: Docker build
+            description: Specify a custom step name for this command, if desired
+            type: string
+          tag-env:
+            default: CIRCLE_SHA1
+            description: Image tag environment variable name, defaults to CIRCLE_SHA1
+            type: env_var_name
+          treat-warnings-as-errors:
+            default: false
+            description: |
+              If linting Dockerfile, treat linting warnings as errors (would trigger an exist code and fail the CircleCI job)?
+            type: boolean
+        steps:
+        - when:
+            condition: <<parameters.lint-dockerfile>>
+            steps:
+            - docker/dockerlint:
+                debug: <<parameters.debug>>
+                dockerfile: <<parameters.path>>/<<parameters.dockerfile>>
+                treat-warnings-as-errors: <<parameters.treat-warnings-as-errors>>
+        - run:
+            command: |
+              docker build \
+                <<#parameters.extra_build_args>><<parameters.extra_build_args>><</parameters.extra_build_args>> \
+                -f <<parameters.path>>/<<parameters.dockerfile>> -t \
+                <<parameters.registry>>/<< parameters.image>>:${<<parameters.tag-env>>} \
+                <<parameters.path>>
+            name: <<parameters.step-name>>
+      push-with-dynamic-tag:
+        description: Push a Docker image to a registry
+        parameters:
+          image:
+            description: Name of image to push
+            type: string
+          registry:
+            default: docker.io
+            description: |
+              Name of registry to use, defaults to docker.io
+            type: string
+          step-name:
+            default: Docker push
+            description: 'Specify a custom step name for this command, if desired'
+            type: string
+          tag-env:
+            default: CIRCLE_SHA1
+            description: 'Image tag environment variable, defaults to CIRCLE_SHA1'
+            type: env_var_name
+        steps:
+          - deploy:
+              command: >
+                docker push <<parameters.registry>>/<<
+                parameters.image>>:${<<parameters.tag-env>>}
+              name: <<parameters.step-name>>
+      determine-docker-tag:
+        parameters:
+          variable:
+            default: DOCKER_TAG
+            description: 'Variable to export to BASH_ENV'
+            type: env_var_name
+        steps:
+          -
+            run:
+              name: 'Determine Docker Tag'
+              command: |
+                SHORT_SHA1=$(git rev-parse --short ${CIRCLE_SHA1})
+                DOCKER_TAG=$([[ ! -z "${CIRCLE_TAG}" ]] && echo ${CIRCLE_TAG//\//-}.${SHORT_SHA1} || ([[ ! -z "${CIRCLE_BRANCH}" ]] && echo ${CIRCLE_BRANCH//\//-}.${SHORT_SHA1} || echo ${SHORT_SHA1}))
+                echo "export <<parameters.variable>>=${DOCKER_TAG}" >> ${BASH_ENV}
+                cat ${BASH_ENV}
+      codecov-upload:
+        description: Upload test results to codecov.io
+        parameters:
+          token:
+            type: string
+        steps:
+          - run:
+              name: Upload to codecov.io
+              command: bash <(curl -s https://codecov.io/bash) -t << parameters.token >>
+      monitor-deployment:
+        description: Checks the status of a kubernetes deployment and waits for all new pods to start and to report as healthy
+        parameters:
+          maxAttempts:
+            type: integer
+            default: 30
+          kubernetesNamespace:
+            type: string
+          kubernetesDeployment:
+            type: string
+        steps:
+          -
+            run:
+              name: Monitor Rollout
+              command: |
+                ATTEMPTS=0
+                ROLLOUT_STATUS_CMD="kubectl rollout status deployment/<< parameters.kubernetesDeployment >> -n << parameters.kubernetesNamespace >>"
+                until $ROLLOUT_STATUS_CMD || [ $ATTEMPTS -eq << parameters.maxAttempts >> ]; do
+                  $ROLLOUT_STATUS_CMD
+                  ATTEMPTS=$((attempts + 1))
+                  sleep 10
+                done
+
+jobs:
+  test:
+    executor: gg-node
+    parameters:
+      codecovToken:
+        type: string
+        default: ""
+    steps:
+      - checkout
+      - setup_remote_docker
+
+      # Download and cache dependencies
+      -
+        restore_cache:
+          keys:
+            - v0-dependencies-{{ checksum "package-lock.json" }}
+
+      -
+        run:
+          name: Dependency Install
+          command: npm install
+
+      -
+        save_cache:
+          paths:
+            - node_modules
+          key: v0-dependencies-{{ checksum "package-lock.json" }}
+
+      # Run Tests!
+      - run: npm test
+
+      - when:
+          condition: << parameters.codecovToken >>
+          steps:
+            - my-orb/codecov-upload:
+                token: << parameters.codecovToken >>
+
+      - unless:
+          condition: << parameters.codecovToken >>
+          steps:
+            - run: echo "Codecov disabled"
+
+      - store_artifacts:
+          path: ./coverage
+
+  manual-build:
+    executor: gg-node
+    steps:
+      - checkout
+      - setup_remote_docker
+      -
+        aws-cli/setup:
+          aws-region: AWS_REGION
+      - aws-ecr/ecr-login
+      - my-orb/determine-docker-tag
+      -
+        docker/check:
+          docker-password: DOCKER_PASS
+          docker-username: DOCKER_USER
+      -
+        my-orb/build-with-dynamic-tag:
+          image: $DOCKER_NAMESPACE/$CIRCLE_PROJECT_REPONAME
+          tag-env: DOCKER_TAG
+          extra_build_args: '--build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)"'
+          registry: $DOCKER_REGISTRY
+      -
+        my-orb/push-with-dynamic-tag:
+          image: $DOCKER_NAMESPACE/$CIRCLE_PROJECT_REPONAME
+          tag-env: DOCKER_TAG
+          registry: $DOCKER_REGISTRY
+
+  deploy-eks:
+    executor: gg-eks
+    parameters:
+      environment:
+        type: string
+      notificationChannel:
+        type: string
+      appName:
+        type: string
+      waitForRollout:
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - my-orb/determine-docker-tag
+
+      # load in workspace
+      -
+        restore_cache:
+          keys:
+            - v0-workspace-{{ .Branch }}-{{ .Revision }}
+
+      # Deploy
+      -
+        deploy:
+          command: ${HOME}/kube-apply.sh .kube/eks-<< parameters.environment >> << parameters.appName >>-<< parameters.environment >>
+
+      # Conditionally wait for rollout to complete
+      - when:
+          condition: << parameters.waitForRollout >>
+          steps:
+            - my-orb/monitor-deployment:
+                maxAttempts: 30
+                kubernetesNamespace: << parameters.appName >>-<< parameters.environment >>
+                kubernetesDeployment: << parameters.appName >>-<< parameters.environment >>
+
+      # Notify deploy
+      - run:
+          name: Deploy Success
+          when: on_success
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
+                ${HOME}/slack.sh -t success -e << parameters.environment >> -c << parameters.notificationChannel >> -d ${DOCKER_TAG}
+            fi
+      - run:
+          name: Deploy Failed
+          when: on_fail
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
+                ${HOME}/slack.sh -t failure -e << parameters.environment >> -c << parameters.notificationChannel >> -d ${DOCKER_TAG}
+            fi
+
+  # Push to Apollo Graph Manager
+  deploy-schema:
+    description: Uploads the GraphQL Schema to Apollo Engine
+    parameters:
+      environment:
+        type: string
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+
+      - run:
+          name: Install Node Version Manager
+          command: |
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm install v12.13.0
+            nvm alias default v12.13.0
+            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+            echo "[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"" >> $BASH_ENV
+
+      -
+        run:
+          name: Dependency Install
+          command: npm install
+
+      -
+        run:
+          name: Install apollo CLI
+          command: npm install --global apollo
+
+      - run:
+          name: Start Prisma server
+          command: docker-compose up -d
+
+      - run:
+          sleep 5
+
+      - run:
+          name: Prisma deploy local
+          command: |
+            NODE_ENV=development PRISMA_SERVER_URL=http://localhost:4466 npm run prisma:deploy:dev
+
+      - run:
+          name: start local service-monitor
+          command: PRISMA_SERVER_URL=http://localhost:4466 npm start
+          background: true
+
+      - run:
+          sleep 5
+
+      -
+        run:
+          name: Upload Schema
+          command: |
+            ENGINE_API_KEY=$ENGINE_API_KEY apollo service:push --endpoint=http://localhost:3021/service-monitor/graphql --tag=<<parameters.environment>>
+
+workflows:
+  build_workflow:
+    jobs:
+      -
+        test:
+          ### Once the project has been saved to github the Repo Token can be
+          ### found at: https://codecov.io/gh/GoodwayGroup/service-monitor
+          codecovToken: d1b7b886-f0ec-4990-a966-b20f66f43d70
+          filters:
+            tags:
+              only: /.*/
+      -
+        manual-build:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /.*/
+
+      # Deploy EKS Staging
+      -
+        deploy-eks:
+          name: deploy-eks-staging
+          context: aws-eks-goodway-staging
+          environment: staging
+          notificationChannel: bi-deployments
+          appName: service-monitor
+          waitForRollout: false
+          requires:
+            - manual-build
+          filters:
+            branches:
+              only:
+                /^(release|hotfix|master|staging).*/
+
+      -
+        deploy-schema:
+          name: deploy-schema-staging
+          environment: staging
+          requires:
+            - deploy-eks-staging
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only:
+                /^(release|hotfix|master|staging).*/
+
+      # Deploy EKS Production
+      -
+        deploy-eks:
+          name: deploy-eks-production
+          context: aws-eks-goodway-production
+          environment: production
+          notificationChannel: bi-development
+          appName: service-monitor
+          waitForRollout: false
+          requires:
+            - manual-build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only:
+                /^(shipit).*/
+
+      -
+        deploy-schema:
+          name: deploy-schema-production
+          environment: production
+          requires:
+            - deploy-eks-production
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only:
+                /^(shipit).*/

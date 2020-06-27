@@ -1,0 +1,8 @@
+description: Upload test results to codecov.io
+parameters:
+  token:
+    type: string
+steps:
+  - run:
+      name: Upload to codecov.io
+      command: bash <(curl -s https://codecov.io/bash) -t << parameters.token >>

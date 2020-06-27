@@ -1,0 +1,24 @@
+description: Push a Docker image to a registry
+parameters:
+  image:
+    description: Name of image to push
+    type: string
+  registry:
+    default: docker.io
+    description: |
+      Name of registry to use, defaults to docker.io
+    type: string
+  step-name:
+    default: Docker push
+    description: 'Specify a custom step name for this command, if desired'
+    type: string
+  tag-env:
+    default: CIRCLE_SHA1
+    description: 'Image tag environment variable, defaults to CIRCLE_SHA1'
+    type: env_var_name
+steps:
+  - deploy:
+      command: >
+        docker push <<parameters.registry>>/<<
+        parameters.image>>:${<<parameters.tag-env>>}
+      name: <<parameters.step-name>>
