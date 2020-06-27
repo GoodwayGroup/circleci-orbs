@@ -13,7 +13,6 @@
         [
             "semantic-release-circleci-orb",
             {
-                "commandName": "/home/circleci/circleci",
                 "orbName": "goodwaygroup/circle-orb",
                 "orbPath": "packed-orb.yml"
             }
