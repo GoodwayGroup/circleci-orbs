@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/GoodwayGroup/circleci-orb/compare/v1.0.1...v1.1.0) (2020-07-27)
+
+
+### Features
+
+* added executor and jobs ([01ec4e2](https://github.com/GoodwayGroup/circleci-orb/commit/01ec4e214db86789da5477f08f9b0d8a5290c23f))
+
 ## [1.0.1](https://github.com/GoodwayGroup/circleci-orb/compare/v1.0.0...v1.0.1) (2020-06-30)
 
 
