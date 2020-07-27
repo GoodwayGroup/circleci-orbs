@@ -1,0 +1,48 @@
+description: Install dependencies and run test command
+
+parameters:
+  executor-tag:
+    type: string
+    default: node-12
+  cache-key:
+    type: string
+    default: v0-dependencies
+  coveralls-upload:
+    type: boolean
+    default: true
+  test-steps:
+    type: steps
+    default:
+      - run: npm test
+
+executor: 
+  name: build-images
+  tag: << parameters.executor-tag >>
+
+steps:
+  - checkout
+  - setup_remote_docker
+
+  # Download and cache dependencies
+  - restore_cache:
+      keys:
+        - << parameters.cache-key >>-{{ checksum "package-lock.json" }}
+
+  - run:
+      name: Dependency Install
+      command: npm install
+
+  - save_cache:
+      paths:
+        - node_modules
+      key: << parameters.cache-key >>-{{ checksum "package-lock.json" }}
+
+  - steps: << parameters.test-steps >>
+
+  - when: 
+      condition: << parameters.coveralls-upload >>
+      steps: 
+        - coveralls/upload
+
+  - store_artifacts:
+      path: ./coverage

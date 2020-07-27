@@ -1,0 +1,10 @@
+description: Common build image executor
+parameters:
+  tag:
+    type: string
+working_directory: ~/repo
+docker:
+  - image: goodwaygroup/circleci-build-images:<< parameters.tag >>
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_PASS
