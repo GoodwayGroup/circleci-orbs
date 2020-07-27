@@ -11,6 +11,7 @@ parameters:
     type: string
   notification-channel:
     type: string
+    default: 
   app-name:
     type: string
   wait-for-rollout:
