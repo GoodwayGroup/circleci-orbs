@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/GoodwayGroup/circleci-orb/compare/v1.1.0...v1.2.0) (2020-07-27)
+
+
+### Bug Fixes
+
+* **deploy:** removed requirement on notification-channel ([7310297](https://github.com/GoodwayGroup/circleci-orb/commit/731029783ed519b6ff5f3ff86a5cfeea3e583f71)), closes [#4](https://github.com/GoodwayGroup/circleci-orb/issues/4)
+
+
+### Features
+
+* add post-steps to deployment job ([d58278e](https://github.com/GoodwayGroup/circleci-orb/commit/d58278e66b7302946866aa074600504dbe63ec9b))
+* added notify rollbar command ([d49851e](https://github.com/GoodwayGroup/circleci-orb/commit/d49851eaf16feb97d3d6b1ef450000884a57a4b1))
+
 # [1.1.0](https://github.com/GoodwayGroup/circleci-orb/compare/v1.0.1...v1.1.0) (2020-07-27)
 
 
