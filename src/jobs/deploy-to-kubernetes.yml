@@ -16,6 +16,9 @@ parameters:
   wait-for-rollout:
     type: boolean
     default: false
+  post-deploy-steps:
+    type: steps
+    default: []
 
 executor: 
   name: build-images
@@ -38,6 +41,8 @@ steps:
             maxAttempts: 30
             kubernetesNamespace: << parameters.app-name >>-<< parameters.environment >>
             kubernetesDeployment: << parameters.app-name >>-<< parameters.environment >>
+
+  - steps: << parameters.post-deploy-steps >>
 
   # Notify deploy
   - when:
