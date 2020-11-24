@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   cli: circleci/circleci-cli@0.1.8
-  orb-tools: circleci/orb-tools@2
+  orb-tools: circleci/orb-tools@10.0.2
 
 jobs:
   pack:
@@ -54,9 +54,10 @@ workflows:
       - pack
 
       - orb-tools/publish:
+          name: Development publish
           orb-path: packed-orb.yml
           orb-ref: "goodwaygroup/circle-orb@dev:${CIRCLE_BRANCH}"
-          publish-token-variable: CIRCLECI_API_TOKEN
+          token-variable: CIRCLECI_API_TOKEN
           attach-workspace: true
           checkout: false
           requires: [pack]
