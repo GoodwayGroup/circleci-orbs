@@ -55,7 +55,7 @@ workflows:
 
       - orb-tools/publish-dev:
           name: Development publish
-          orb-name: goodwaygroup/circle-orb
+          orb-name: goodwaygroup/circleci-orb
           orb-path: packed-orb.yml
           publish-token-variable: CIRCLECI_API_TOKEN
           publish-branch-sha-version: true
