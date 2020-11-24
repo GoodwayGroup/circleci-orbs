@@ -53,11 +53,12 @@ workflows:
     jobs:
       - pack
 
-      - orb-tools/publish:
+      - orb-tools/publish-dev:
           name: Development publish
+          orb-name: goodwaygroup/circle-orb
           orb-path: packed-orb.yml
-          orb-ref: "goodwaygroup/circle-orb@dev:${CIRCLE_BRANCH}"
-          token-variable: CIRCLECI_API_TOKEN
+          publish-token-variable: CIRCLECI_API_TOKEN
+          publish-branch-sha-version: true
           attach-workspace: true
           checkout: false
           requires: [pack]
