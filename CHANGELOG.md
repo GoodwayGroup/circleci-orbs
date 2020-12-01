@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/GoodwayGroup/circleci-orb/compare/v1.2.0...v1.3.0) (2020-12-01)
+
+
+### Features
+
+* **python:** added dag deploy and python test jobs ([#7](https://github.com/GoodwayGroup/circleci-orb/issues/7)) ([7700b4c](https://github.com/GoodwayGroup/circleci-orb/commit/7700b4c281f6fe2f074cb3a7020308b7016e0ba5))
+
 # [1.2.0](https://github.com/GoodwayGroup/circleci-orb/compare/v1.1.0...v1.2.0) (2020-07-27)
 
 
