@@ -1,0 +1,76 @@
+description: Deploy a legacy Airflow DAG to Host with rSync and SSH
+
+parameters:
+  executor-repo:
+    type: string
+    default: circleci/python
+  executor-tag:
+    type: string
+    default: "3.7"
+  destination-path:
+    type: string
+  pre-deploy-steps:
+    type: steps
+    default: []
+  post-deploy-steps:
+    type: steps
+    default: []
+  environment:
+    type: string
+  notification-channel:
+    type: string
+    default:
+  app-name:
+    type: string
+
+executor: 
+  name: dockerhub-authed
+  repo: << parameters.executor-repo >>
+  tag: << parameters.executor-tag >>
+
+steps:
+  - checkout
+  - determine-docker-tag
+
+  - run:
+      name: Setup container for deployment
+      command: |
+        sudo apt-get install rsync
+        curl https://i.jpillora.com/GoodwayGroup/gwsm | bash
+        sudo mv gwsm /usr/local/bin
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        gwsm sm get -s circleci/ssh-key | jq -r '.privateKey' > ~/.ssh/bot-circleci
+        gwsm sm get -s circleci/ssh-config > ~/.ssh/config
+        gwsm sm get -s circleci/known-hosts >> ~/.ssh/known_hosts
+        chmod 600 ~/.ssh/bot-circleci
+
+  - steps: << parameters.pre-deploy-steps >>
+
+  - run:
+      name: deploy
+      command: |
+        eval $(ssh-agent)
+        ssh-add ~/.ssh/bot-circleci
+        rsync -avce "ssh -o StrictHostKeyChecking=no -A -J jump" ~/repo airflow:<< parameters.destination-path >> --delete --exclude '*.pyc'
+
+  - steps: << parameters.post-deploy-steps >>
+
+  # Notify deploy
+  - when:
+      condition: << parameters.notification-channel >>
+      steps:
+        - run:
+            name: Deploy Success
+            when: on_success
+            command: |
+              if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
+                  ${HOME}/slack.sh -t success -e << parameters.environment >> -c << parameters.notification-channel >> -d ${DOCKER_TAG}
+              fi
+        - run:
+            name: Deploy Failed
+            when: on_fail
+            command: |
+              if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
+                  ${HOME}/slack.sh -t failure -e << parameters.environment >> -c << parameters.notification-channel >> -d ${DOCKER_TAG}
+              fi

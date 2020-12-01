@@ -1,0 +1,70 @@
+description: Install dependencies and run test command
+
+parameters:
+  executor-repo:
+    type: string
+    default: circleci/python
+  executor-tag:
+    type: string
+    default: "3.7"
+  cache-key:
+    type: string
+    default: v0-dependencies
+  coveralls-upload:
+    type: boolean
+    default: true
+  lint:
+    default: true
+    description: |
+      Lint codebase before test
+    type: boolean
+  lint-steps:
+    default:
+      - run:
+          command: poetry run poe lint
+    description: |
+      Steps to run to lint a codebase
+    type: steps
+  test-steps:
+    default:
+      - run:
+          command: poetry run poe test
+    description: |
+      Steps to run to test a codebase
+    type: steps
+
+executor: 
+  name: dockerhub-authed
+  repo: << parameters.executor-repo >>
+  tag: << parameters.executor-tag >>
+
+steps:
+  - checkout
+
+  # Download and cache dependencies
+  - restore_cache:
+      keys:
+        - << parameters.cache-key >>-{{ checksum "poetry.lock" }}
+
+  - run:
+      name: Dependency Install
+      command: poetry install
+
+  - save_cache:
+      paths:
+        - node_modules
+      key: << parameters.cache-key >>-{{ checksum "poetry.lock" }}
+
+  - when:
+      condition: <<parameters.lint>>
+      steps: <<parameters.lint-steps>>
+
+  - steps: << parameters.test-steps >>
+
+  - when: 
+      condition: << parameters.coveralls-upload >>
+      steps: 
+        - coveralls/upload
+
+  - store_artifacts:
+      path: ./coverage

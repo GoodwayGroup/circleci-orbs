@@ -1,0 +1,12 @@
+description: Any dockerhub image executor
+parameters:
+  repo:
+    type: string
+  tag:
+    type: string
+working_directory: ~/repo
+docker:
+  - image: << parameters.repo >>:<< parameters.tag >>
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_PASS
