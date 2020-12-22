@@ -52,7 +52,7 @@ steps:
 
   - save_cache:
       paths:
-        - node_modules
+        - .venv
       key: << parameters.cache-key >>-{{ checksum "poetry.lock" }}
 
   - when:
