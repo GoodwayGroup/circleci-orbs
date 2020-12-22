@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/GoodwayGroup/circleci-orb/compare/v1.3.0...v1.3.1) (2020-12-22)
+
+
+### Bug Fixes
+
+* **test-python:** corrected cached paths ([e7b15a0](https://github.com/GoodwayGroup/circleci-orb/commit/e7b15a09d063e3ec6a7f59245246954fcc89b574))
+
 # [1.3.0](https://github.com/GoodwayGroup/circleci-orb/compare/v1.2.0...v1.3.0) (2020-12-01)
 
 
