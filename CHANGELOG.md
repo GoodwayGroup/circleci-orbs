@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/GoodwayGroup/circleci-orb/compare/v1.3.1...v1.3.2) (2021-01-12)
+
+
+### Bug Fixes
+
+* **deploy-dag:** correct slack notification and project folder copy into nested folder ([#11](https://github.com/GoodwayGroup/circleci-orb/issues/11)) ([cbcada8](https://github.com/GoodwayGroup/circleci-orb/commit/cbcada8757d5b2c33b2ee09e7d95b80b878d1ac1))
+
 ## [1.3.1](https://github.com/GoodwayGroup/circleci-orb/compare/v1.3.0...v1.3.1) (2020-12-22)
 
 
