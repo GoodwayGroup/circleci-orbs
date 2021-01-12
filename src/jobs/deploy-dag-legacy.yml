@@ -3,10 +3,10 @@ description: Deploy a legacy Airflow DAG to Host with rSync and SSH
 parameters:
   executor-repo:
     type: string
-    default: circleci/python
+    default: goodwaygroup/circleci-build-images
   executor-tag:
     type: string
-    default: "3.7"
+    default: "eks-latest"
   destination-path:
     type: string
   pre-deploy-steps:
