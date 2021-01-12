@@ -52,7 +52,7 @@ steps:
       command: |
         eval $(ssh-agent)
         ssh-add ~/.ssh/bot-circleci
-        rsync -avce "ssh -o StrictHostKeyChecking=no -A -J jump" ~/repo airflow:<< parameters.destination-path >> --delete --exclude '*.pyc'
+        rsync -avce "ssh -o StrictHostKeyChecking=no -A -J jump" ~/repo/ airflow:<< parameters.destination-path >> --delete --exclude '*.pyc'
 
   - steps: << parameters.post-deploy-steps >>
 
