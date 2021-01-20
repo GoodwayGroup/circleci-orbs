@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/GoodwayGroup/circleci-orb/compare/v1.3.2...v1.3.3) (2021-01-20)
+
+
+### Bug Fixes
+
+* **determine-docker-tag:** remove @ from tag and branch name ([#12](https://github.com/GoodwayGroup/circleci-orb/issues/12)) ([2a5baa6](https://github.com/GoodwayGroup/circleci-orb/commit/2a5baa6716cc0bd1af98136c30b8898870dbda26))
+
 ## [1.3.2](https://github.com/GoodwayGroup/circleci-orb/compare/v1.3.1...v1.3.2) (2021-01-12)
 
 
