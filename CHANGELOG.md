@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/GoodwayGroup/circleci-orb/compare/v1.3.3...v2.0.0) (2021-02-18)
+
+
+### Features
+
+* **node lint:** add npm run lint step to the test-nodejs task ([#13](https://github.com/GoodwayGroup/circleci-orb/issues/13)) ([1fbc03f](https://github.com/GoodwayGroup/circleci-orb/commit/1fbc03f4f12960f7e4c15a4b7416006702d998f3))
+
+
+### BREAKING CHANGES
+
+* **node lint:** job `test-nodejs` now enables linting by default via the command `npm run lint`
+
 ## [1.3.3](https://github.com/GoodwayGroup/circleci-orb/compare/v1.3.2...v1.3.3) (2021-01-20)
 
 
