@@ -14,8 +14,19 @@ parameters:
     type: steps
     default:
       - run: npm test
+  lint:
+    default: true
+    description: |
+      Lint codebase before test
+    type: boolean
+  lint-steps:
+    type: steps
+    default:
+      - run: npm run lint
+    description: |
+      Steps to run to lint a codebase
 
-executor: 
+executor:
   name: build-images
   tag: << parameters.executor-tag >>
 
@@ -37,11 +48,15 @@ steps:
         - node_modules
       key: << parameters.cache-key >>-{{ checksum "package-lock.json" }}
 
+  - when:
+      condition: <<parameters.lint>>
+      steps: <<parameters.lint-steps>>
+
   - steps: << parameters.test-steps >>
 
-  - when: 
+  - when:
       condition: << parameters.coveralls-upload >>
-      steps: 
+      steps:
         - coveralls/upload
 
   - store_artifacts:
