@@ -22,7 +22,7 @@ jobs:
             - '*'
   publish:
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:15
     steps:
       - attach_workspace:
           at: .
