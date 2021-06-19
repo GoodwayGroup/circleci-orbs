@@ -73,5 +73,6 @@ steps:
         - run:
             command: |
               for i in <<parameters.additional_tags>>; do
-               docker tag <<parameters.registry>>/<< parameters.image>>:${<<parameters.tag-env>>} <<parameters.registry>>/<< parameters.image>>:$i
+                docker tag <<parameters.registry>>/<< parameters.image>>:${<<parameters.tag-env>>} <<parameters.registry>>/<< parameters.image>>:$i
               done
+            name: <<parameters.step-name>> aditional tags

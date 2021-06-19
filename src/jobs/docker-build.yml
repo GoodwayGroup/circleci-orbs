@@ -64,7 +64,7 @@ steps:
       tag-env: DOCKER_TAG
       extra_build_args: '--build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)"'
       registry: ${<< parameters.registry-url >>}
-      additional_tags: ${<< parameters.additional_tags >>}
+      additional_tags: << parameters.additional_tags >>
 
   - when:
       condition: << parameters.push >>
@@ -74,3 +74,4 @@ steps:
             image: ${<< parameters.image-namespace >>}/${<< parameters.image-repo >>}
             tag-env: DOCKER_TAG
             registry: ${<< parameters.registry-url >>}
+            additional_tags: << parameters.additional_tags >>
