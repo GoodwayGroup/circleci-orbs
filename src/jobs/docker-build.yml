@@ -26,8 +26,12 @@ parameters:
   pre-push-steps:
     type: steps
     default: []
+  additional_tags:
+    default: ''
+    description: Space seperated names for additional images tags.
+    type: string
 
-executor: 
+executor:
   name: build-images
   tag: << parameters.executor-tag >>
 
@@ -50,9 +54,9 @@ steps:
         - docker/check:
             docker-password: DOCKER_PASS
             docker-username: DOCKER_USER
-  
+
   - determine-docker-tag
-  
+
   - steps: << parameters.pre-build-steps >>
 
   - build-with-dynamic-tag:
@@ -60,7 +64,8 @@ steps:
       tag-env: DOCKER_TAG
       extra_build_args: '--build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)"'
       registry: ${<< parameters.registry-url >>}
-  
+      additional_tags: ${<< parameters.additional_tags >>}
+
   - when:
       condition: << parameters.push >>
       steps:

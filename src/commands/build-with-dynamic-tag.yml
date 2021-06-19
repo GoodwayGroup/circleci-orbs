@@ -46,6 +46,10 @@ parameters:
     description: |
       If linting Dockerfile, treat linting warnings as errors (would trigger an exist code and fail the CircleCI job)?
     type: boolean
+  additional_tags:
+    default: ''
+    description: Space seperated names for additional images tags.
+    type: string
 steps:
   - when:
       condition: <<parameters.lint-dockerfile>>
@@ -62,3 +66,12 @@ steps:
           <<parameters.registry>>/<< parameters.image>>:${<<parameters.tag-env>>} \
           <<parameters.path>>
       name: <<parameters.step-name>>
+
+  - when:
+      condition: <<parameters.additional_tags>> != ''
+      steps:
+        - run:
+            command: |
+              for i in <<parameters.additional_tags>>; do
+               docker tag <<parameters.registry>>/<< parameters.image>>:${<<parameters.tag-env>>} <<parameters.registry>>/<< parameters.image>>:$i
+              done
