@@ -16,22 +16,41 @@ parameters:
     default: CIRCLE_SHA1
     description: 'Image tag environment variable, defaults to CIRCLE_SHA1'
     type: env_var_name
-  additional_tags:
-    default: ''
-    description: Space seperated names for additional images tags.
+  # additional-tags:
+  #   default: ''
+  #   description: Space seperated names for additional images tags.
+  #   type: string
+  push-all-tags:
     type: string
+    default: ''
 steps:
-  - deploy:
-      command: >
-        docker push <<parameters.registry>>/<<
-        parameters.image>>:${<<parameters.tag-env>>}
-      name: <<parameters.step-name>>
   - when:
-      condition: <<parameters.additional_tags>> != ''
+      condition: <<parameters.push-all-tags>>
       steps:
-        - run:
-            command: |
-              for i in  $(echo << parameters.additional_tags >>); do
-                docker push <<parameters.registry>>/<< parameters.image>>:$i
-              done
-            name: <<parameters.step-name>> aditional tags
+        - deploy:
+            command: >
+              docker push <<parameters.registry>>/<<
+              parameters.image>>:${<<parameters.tag-env>>}  --all-tags
+            name: <<parameters.step-name>> all tags
+  - unless:
+      condition: <<parameters.push-all-tags>>
+      steps:
+        - deploy:
+            command: >
+              docker push <<parameters.registry>>/<<
+              parameters.image>>:${<<parameters.tag-env>>}
+            name: <<parameters.step-name>>
+  # - deploy:
+  #     command: >
+  #       docker push <<parameters.registry>>/<<
+  #       parameters.image>>:${<<parameters.tag-env>>}
+  #     name: <<parameters.step-name>>
+  # - when:
+  #     condition: <<parameters.additional-tags>> != ''
+  #     steps:
+  #       - run:
+  #           command: |
+  #             for i in << parameters.additional-tags >>; do
+  #               docker push <<parameters.registry>>/<< parameters.image>>:$i
+  #             done
+  #           name: <<parameters.step-name>> aditional tags
