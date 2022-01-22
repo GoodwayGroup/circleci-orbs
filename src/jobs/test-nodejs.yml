@@ -1,6 +1,10 @@
 description: Install dependencies and run test command
 
 parameters:
+  executor-name:
+    type: enum
+    default: "build-images"
+    enum: ["build-images", "dockerhub-authed", "ecr-images"]
   executor-tag:
     type: string
     default: node-12
@@ -27,7 +31,7 @@ parameters:
       Steps to run to lint a codebase
 
 executor:
-  name: build-images
+  name: << parameters.executor-name >>
   tag: << parameters.executor-tag >>
 
 steps:
