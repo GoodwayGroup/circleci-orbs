@@ -1,6 +1,10 @@
 description: Deploy an image to kubernetes
 
 parameters:
+  executor-name:
+    type: enum
+    default: "build-images"
+    enum: ["build-images", "dockerhub-authed", "ecr-images"]
   executor-tag:
     type: string
     default: eks-1.0.0
@@ -21,8 +25,8 @@ parameters:
     type: steps
     default: []
 
-executor: 
-  name: build-images
+executor:
+  name: << parameters.executor-name >>
   tag: << parameters.executor-tag >>
 
 steps:

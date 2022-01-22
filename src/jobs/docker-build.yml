@@ -1,6 +1,10 @@
 description: Docker image build and push
 
 parameters:
+  executor-name:
+    type: enum
+    default: "build-images"
+    enum: ["build-images", "dockerhub-authed", "ecr-images"]
   executor-tag:
     type: string
     default: node-12
@@ -27,8 +31,8 @@ parameters:
     type: steps
     default: []
 
-executor: 
-  name: build-images
+executor:
+  name: << parameters.executor-name >>
   tag: << parameters.executor-tag >>
 
 steps:
@@ -50,9 +54,9 @@ steps:
         - docker/check:
             docker-password: DOCKER_PASS
             docker-username: DOCKER_USER
-  
+
   - determine-docker-tag
-  
+
   - steps: << parameters.pre-build-steps >>
 
   - build-with-dynamic-tag:
@@ -60,7 +64,7 @@ steps:
       tag-env: DOCKER_TAG
       extra_build_args: '--build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)"'
       registry: ${<< parameters.registry-url >>}
-  
+
   - when:
       condition: << parameters.push >>
       steps:
