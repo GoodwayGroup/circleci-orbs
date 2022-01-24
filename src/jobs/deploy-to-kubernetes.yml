@@ -4,7 +4,7 @@ parameters:
   executor-name:
     type: enum
     default: "build-images"
-    enum: ["build-images", "dockerhub-authed", "ecr-images"]
+    enum: ["build-images", "dockerhub-authed", "ecr-authed"]
   executor-tag:
     type: string
     default: eks-1.0.0
@@ -30,40 +30,10 @@ executor:
   tag: << parameters.executor-tag >>
 
 steps:
-  - checkout
-  - determine-docker-tag
-
-  # Deploy
-  - run:
-      name: Deploy configuration to Kubernetes
-      command: ${HOME}/kube-apply.sh << parameters.kube-path >><< parameters.environment >> << parameters.app-name >>-<< parameters.environment >>
-
-  # Conditionally wait for rollout to complete
-  - when:
-      condition: << parameters.wait-for-rollout >>
-      steps:
-        - monitor-deployment:
-            maxAttempts: 30
-            kubernetesNamespace: << parameters.app-name >>-<< parameters.environment >>
-            kubernetesDeployment: << parameters.app-name >>-<< parameters.environment >>
-
-  - steps: << parameters.post-deploy-steps >>
-
-  # Notify deploy
-  - when:
-      condition: << parameters.notification-channel >>
-      steps:
-        - run:
-            name: Deploy Success
-            when: on_success
-            command: |
-              if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
-                  ${HOME}/slack.sh -t success -e << parameters.environment >> -c << parameters.notification-channel >> -d ${DOCKER_TAG}
-              fi
-        - run:
-            name: Deploy Failed
-            when: on_fail
-            command: |
-              if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
-                  ${HOME}/slack.sh -t failure -e << parameters.environment >> -c << parameters.notification-channel >> -d ${DOCKER_TAG}
-              fi
+  - deploy-to-kubernetes:
+      kube-path: << parameters.kube-path >>
+      environment: << parameters.environment >>
+      notification-channel: << parameters.notification-channel >>
+      app-name: << parameters.app-name >>
+      wait-for-rollout: << parameters.wait-for-rollout >>
+      post-deploy-steps: << parameters.post-deploy-steps >>

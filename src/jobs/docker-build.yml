@@ -4,7 +4,7 @@ parameters:
   executor-name:
     type: enum
     default: "build-images"
-    enum: ["build-images", "dockerhub-authed", "ecr-images"]
+    enum: ["build-images", "dockerhub-authed", "ecr-authed"]
   executor-tag:
     type: string
     default: node-12
@@ -36,40 +36,11 @@ executor:
   tag: << parameters.executor-tag >>
 
 steps:
-  - checkout
-  - setup_remote_docker
-
-  - when:
-      condition:
-        equal: ["ecr", << parameters.registry-type >>]
-      steps:
-        - aws-ecr/ecr-login:
-            account-url: << parameters.registry-url >>
-            region: AWS_REGION
-
-  - when:
-      condition:
-        equal: ["dockerhub", << parameters.registry-type >>]
-      steps:
-        - docker/check:
-            docker-password: DOCKER_PASS
-            docker-username: DOCKER_USER
-
-  - determine-docker-tag
-
-  - steps: << parameters.pre-build-steps >>
-
-  - build-with-dynamic-tag:
-      image: ${<< parameters.image-namespace >>}/${<< parameters.image-repo >>}
-      tag-env: DOCKER_TAG
-      extra_build_args: '--build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)"'
-      registry: ${<< parameters.registry-url >>}
-
-  - when:
-      condition: << parameters.push >>
-      steps:
-        - steps: << parameters.pre-push-steps >>
-        - push-with-dynamic-tag:
-            image: ${<< parameters.image-namespace >>}/${<< parameters.image-repo >>}
-            tag-env: DOCKER_TAG
-            registry: ${<< parameters.registry-url >>}
+  - docker-build:
+      registry-type: << parameters.registry-type >>
+      registry-url: << parameters.registry-url >>
+      image-namespace: << parameters.image-namespace >>
+      image-repo: << parameters.image-repo >>
+      push: << parameters.push >>
+      pre-build-steps: << parameters.pre-build-steps >>
+      pre-push-steps: << parameters.pre-push-steps >>

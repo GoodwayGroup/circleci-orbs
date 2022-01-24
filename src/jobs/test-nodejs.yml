@@ -4,7 +4,7 @@ parameters:
   executor-name:
     type: enum
     default: "build-images"
-    enum: ["build-images", "dockerhub-authed", "ecr-images"]
+    enum: ["build-images", "dockerhub-authed", "ecr-authed"]
   executor-tag:
     type: string
     default: node-12
@@ -35,33 +35,9 @@ executor:
   tag: << parameters.executor-tag >>
 
 steps:
-  - checkout
-  - setup_remote_docker
-
-  # Download and cache dependencies
-  - restore_cache:
-      keys:
-        - << parameters.cache-key >>-{{ checksum "package-lock.json" }}
-
-  - run:
-      name: Dependency Install
-      command: npm install
-
-  - save_cache:
-      paths:
-        - node_modules
-      key: << parameters.cache-key >>-{{ checksum "package-lock.json" }}
-
-  - when:
-      condition: <<parameters.lint>>
-      steps: <<parameters.lint-steps>>
-
-  - steps: << parameters.test-steps >>
-
-  - when:
-      condition: << parameters.coveralls-upload >>
-      steps:
-        - coveralls/upload
-
-  - store_artifacts:
-      path: ./coverage
+  - test-nodejs:
+      cache-key: << parameters.cache-key >>
+      coveralls-upload: << parameters.coveralls-upload >>
+      test-steps: << parameters.test-steps >>
+      lint: << parameters.lint >>
+      lint-steps: << parameters.lint-steps >>

@@ -1,0 +1,64 @@
+description: Docker image build and push
+
+parameters:
+  registry-type:
+    type: enum
+    default: dockerhub
+    enum: ["dockerhub", "ecr"]
+  registry-url:
+    type: env_var_name
+    default: DOCKER_REGISTRY
+  image-namespace:
+    type: env_var_name
+    default: DOCKER_NAMESPACE
+  image-repo:
+    type: env_var_name
+    default: CIRCLE_PROJECT_REPONAME
+  push:
+    type: boolean
+    default: true
+  pre-build-steps:
+    type: steps
+    default: []
+  pre-push-steps:
+    type: steps
+    default: []
+
+steps:
+  - checkout
+  - setup_remote_docker
+
+  - when:
+      condition:
+        equal: ["ecr", << parameters.registry-type >>]
+      steps:
+        - aws-ecr/ecr-login:
+            account-url: << parameters.registry-url >>
+            region: AWS_REGION
+
+  - when:
+      condition:
+        equal: ["dockerhub", << parameters.registry-type >>]
+      steps:
+        - docker/check:
+            docker-password: DOCKER_PASS
+            docker-username: DOCKER_USER
+
+  - determine-docker-tag
+
+  - steps: << parameters.pre-build-steps >>
+
+  - build-with-dynamic-tag:
+      image: ${<< parameters.image-namespace >>}/${<< parameters.image-repo >>}
+      tag-env: DOCKER_TAG
+      extra_build_args: '--build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)"'
+      registry: ${<< parameters.registry-url >>}
+
+  - when:
+      condition: << parameters.push >>
+      steps:
+        - steps: << parameters.pre-push-steps >>
+        - push-with-dynamic-tag:
+            image: ${<< parameters.image-namespace >>}/${<< parameters.image-repo >>}
+            tag-env: DOCKER_TAG
+            registry: ${<< parameters.registry-url >>}
