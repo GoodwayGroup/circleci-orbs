@@ -1,0 +1,39 @@
+description: Deploy an image to kubernetes from build images hosted in ecr
+
+parameters:
+  executor-name:
+    type: enum
+    default: "ecr-authed"
+    enum: ["build-images", "dockerhub-authed", "ecr-authed"]
+  executor-tag:
+    type: string
+    default: eks-latest
+  kube-path:
+    type: string
+    default: .kube/
+  environment:
+    type: string
+  notification-channel:
+    type: string
+    default:
+  app-name:
+    type: string
+  wait-for-rollout:
+    type: boolean
+    default: false
+  post-deploy-steps:
+    type: steps
+    default: []
+
+executor:
+  name: << parameters.executor-name >>
+  tag: << parameters.executor-tag >>
+
+steps:
+  - deploy-to-kubernetes:
+      kube-path: << parameters.kube-path >>
+      environment: << parameters.environment >>
+      notification-channel: << parameters.notification-channel >>
+      app-name: << parameters.app-name >>
+      wait-for-rollout: << parameters.wait-for-rollout >>
+      post-deploy-steps: << parameters.post-deploy-steps >>

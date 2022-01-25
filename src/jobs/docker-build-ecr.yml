@@ -1,0 +1,46 @@
+description: Docker image build and push from build images hosted in ecr
+
+parameters:
+  executor-name:
+    type: enum
+    default: "ecr-authed"
+    enum: ["build-images", "dockerhub-authed", "ecr-authed"]
+  executor-tag:
+    type: string
+    default: node-latest
+  registry-type:
+    type: enum
+    default: ecr
+    enum: ["dockerhub", "ecr"]
+  registry-url:
+    type: env_var_name
+    default: DOCKER_REGISTRY
+  image-namespace:
+    type: env_var_name
+    default: DOCKER_NAMESPACE
+  image-repo:
+    type: env_var_name
+    default: CIRCLE_PROJECT_REPONAME
+  push:
+    type: boolean
+    default: true
+  pre-build-steps:
+    type: steps
+    default: []
+  pre-push-steps:
+    type: steps
+    default: []
+
+executor:
+  name: << parameters.executor-name >>
+  tag: << parameters.executor-tag >>
+
+steps:
+  - docker-build:
+      registry-type: << parameters.registry-type >>
+      registry-url: << parameters.registry-url >>
+      image-namespace: << parameters.image-namespace >>
+      image-repo: << parameters.image-repo >>
+      push: << parameters.push >>
+      pre-build-steps: << parameters.pre-build-steps >>
+      pre-push-steps: << parameters.pre-push-steps >>

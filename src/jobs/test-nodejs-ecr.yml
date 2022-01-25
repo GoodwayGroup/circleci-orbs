@@ -1,0 +1,42 @@
+description: Install dependencies and run test command from build images hosted in ecr
+
+parameters:
+  executor-name:
+    type: enum
+    default: "ecr-authed"
+    enum: ["build-images", "dockerhub-authed", "ecr-authed"]
+  executor-tag:
+    type: string
+  cache-key:
+    type: string
+    default: v0-dependencies
+  coveralls-upload:
+    type: boolean
+    default: true
+  test-steps:
+    type: steps
+    default:
+      - run: npm test
+  lint:
+    default: true
+    description: |
+      Lint codebase before test
+    type: boolean
+  lint-steps:
+    type: steps
+    default:
+      - run: npm run lint
+    description: |
+      Steps to run to lint a codebase
+
+executor:
+  name: << parameters.executor-name >>
+  tag: << parameters.executor-tag >>
+
+steps:
+  - test-nodejs:
+      cache-key: << parameters.cache-key >>
+      coveralls-upload: << parameters.coveralls-upload >>
+      test-steps: << parameters.test-steps >>
+      lint: << parameters.lint >>
+      lint-steps: << parameters.lint-steps >>
