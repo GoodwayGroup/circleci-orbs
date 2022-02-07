@@ -8,7 +8,7 @@ Goodway CircleCI Orbs
 
 ## Dev Builds
 
-For any none master branch, CircleCI will build dev tags to be used for testing.
+For any non-master branch, CircleCI will build dev tags to be used for testing.
 
 ```
 Orb `goodwaygroup/circleci-orb@dev:alpha` was published.
