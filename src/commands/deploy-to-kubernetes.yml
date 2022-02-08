@@ -1,0 +1,58 @@
+description: Deploy an image to kubernetes
+
+parameters:
+  kube-path:
+    type: string
+    default: .kube/
+  environment:
+    type: string
+  notification-channel:
+    type: string
+    default:
+  app-name:
+    type: string
+  wait-for-rollout:
+    type: boolean
+    default: false
+  post-deploy-steps:
+    type: steps
+    default: []
+
+steps:
+  - checkout
+  - determine-docker-tag
+
+  # Deploy
+  - run:
+      name: Deploy configuration to Kubernetes
+      command: ${HOME}/kube-apply.sh << parameters.kube-path >><< parameters.environment >> << parameters.app-name >>-<< parameters.environment >>
+
+  # Conditionally wait for rollout to complete
+  - when:
+      condition: << parameters.wait-for-rollout >>
+      steps:
+        - monitor-deployment:
+            maxAttempts: 30
+            kubernetesNamespace: << parameters.app-name >>-<< parameters.environment >>
+            kubernetesDeployment: << parameters.app-name >>-<< parameters.environment >>
+
+  - steps: << parameters.post-deploy-steps >>
+
+  # Notify deploy
+  - when:
+      condition: << parameters.notification-channel >>
+      steps:
+        - run:
+            name: Deploy Success
+            when: on_success
+            command: |
+              if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
+                  ${HOME}/slack.sh -t success -e << parameters.environment >> -c << parameters.notification-channel >> -d ${DOCKER_TAG}
+              fi
+        - run:
+            name: Deploy Failed
+            when: on_fail
+            command: |
+              if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
+                  ${HOME}/slack.sh -t failure -e << parameters.environment >> -c << parameters.notification-channel >> -d ${DOCKER_TAG}
+              fi

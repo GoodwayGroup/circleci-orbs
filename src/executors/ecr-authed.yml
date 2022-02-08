@@ -1,0 +1,32 @@
+description: Common build image executor hosted on ecr
+parameters:
+  tag:
+    type: string
+  repo:
+    type: string
+    default: circleci-build-images
+  account-url:
+    default: DOCKER_REGISTRY
+    description: >
+      The Amazon ECR account URL that maps to an AWS account, e.g.
+      {awsAccountNum}.dkr.ecr.us-west-2.amazonaws.com
+    type: env_var_name
+  aws-access-key-id:
+    default: AWS_ACCESS_KEY_ID
+    description: >
+      AWS access key id for IAM role. Set this to the name of the environment
+      variable you will set to hold this value, i.e. AWS_ACCESS_KEY.
+    type: env_var_name
+  aws-secret-access-key:
+    default: AWS_SECRET_ACCESS_KEY
+    description: >
+      AWS secret key for IAM role. Set this to the name of the environment
+      variable you will set to hold this value, i.e. AWS_SECRET_ACCESS_KEY.
+    type: env_var_name
+
+working_directory: ~/repo
+docker:
+      - image: $<< parameters.account-url >>/<< parameters.repo >>:<< parameters.tag >>
+        aws_auth:
+          aws_access_key_id: $<<parameters.aws-access-key-id>>
+          aws_secret_access_key: $<<parameters.aws-secret-access-key>>

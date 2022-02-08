@@ -23,7 +23,7 @@ parameters:
   app-name:
     type: string
 
-executor: 
+executor:
   name: dockerhub-authed
   repo: << parameters.executor-repo >>
   tag: << parameters.executor-tag >>

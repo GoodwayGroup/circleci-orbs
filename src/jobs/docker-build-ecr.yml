@@ -1,16 +1,16 @@
-description: Docker image build and push
+description: Docker image build and push from build images hosted in ecr
 
 parameters:
   executor-name:
     type: enum
-    default: "build-images"
+    default: "ecr-authed"
     enum: ["build-images", "dockerhub-authed", "ecr-authed"]
   executor-tag:
     type: string
-    default: node-12
+    default: node-latest
   registry-type:
     type: enum
-    default: dockerhub
+    default: ecr
     enum: ["dockerhub", "ecr"]
   registry-url:
     type: env_var_name

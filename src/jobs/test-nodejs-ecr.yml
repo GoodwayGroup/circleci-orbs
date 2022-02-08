@@ -1,13 +1,12 @@
-description: Install dependencies and run test command
+description: Install dependencies and run test command from build images hosted in ecr
 
 parameters:
   executor-name:
     type: enum
-    default: "build-images"
+    default: "ecr-authed"
     enum: ["build-images", "dockerhub-authed", "ecr-authed"]
   executor-tag:
     type: string
-    default: node-12
   cache-key:
     type: string
     default: v0-dependencies

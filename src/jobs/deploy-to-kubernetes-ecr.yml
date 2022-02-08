@@ -1,13 +1,13 @@
-description: Deploy an image to kubernetes
+description: Deploy an image to kubernetes from build images hosted in ecr
 
 parameters:
   executor-name:
     type: enum
-    default: "build-images"
+    default: "ecr-authed"
     enum: ["build-images", "dockerhub-authed", "ecr-authed"]
   executor-tag:
     type: string
-    default: eks-1.0.0
+    default: eks-latest
   kube-path:
     type: string
     default: .kube/
@@ -15,7 +15,7 @@ parameters:
     type: string
   notification-channel:
     type: string
-    default:
+    default: ''
   app-name:
     type: string
   wait-for-rollout:
