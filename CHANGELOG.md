@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.0.2...v2.1.0) (2022-02-17)
+
+
+### Features
+
+* **ecr:** SMS-440 added executor and jobs to manage ecr hosted docker images. ([#40](https://github.com/GoodwayGroup/circleci-orb/issues/40)) ([55d6dbf](https://github.com/GoodwayGroup/circleci-orb/commit/55d6dbfb0c7038654c43910a8a337bfd1107df89))
+
 ## [2.0.2](https://github.com/GoodwayGroup/circleci-orb/compare/v2.0.1...v2.0.2) (2021-05-18)
 
 ## [2.0.1](https://github.com/GoodwayGroup/circleci-orb/compare/v2.0.0...v2.0.1) (2021-05-18)
