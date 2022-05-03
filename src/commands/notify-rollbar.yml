@@ -11,10 +11,13 @@ parameters:
     default: circleci
 
 steps:
-  - run: |
-      revision="$([[ ! -z "${CIRCLE_TAG}" ]] && echo ${CIRCLE_TAG//\//-} || ([[ ! -z "${CIRCLE_BRANCH}" ]] && echo ${CIRCLE_BRANCH//\//-} || echo ${CIRCLE_SHA1}))"
-      curl https://api.rollbar.com/api/1/deploy/ \
-        -F access_token="${<< parameters.token-var >>}" \
-        -F environment="<< parameters.environment >>" \
-        -F revision="$revision" \
-        -F local_username="<< parameters.username >>"
+  - 
+    run: 
+      name: Update Rollbar 
+      command: |
+        revision="$([[ ! -z "${CIRCLE_TAG}" ]] && echo ${CIRCLE_TAG//\//-} || ([[ ! -z "${CIRCLE_BRANCH}" ]] && echo ${CIRCLE_BRANCH//\//-} || echo ${CIRCLE_SHA1}))"
+        curl https://api.rollbar.com/api/1/deploy/ \
+          -F access_token="${<< parameters.token-var >>}" \
+          -F environment="<< parameters.environment >>" \
+          -F revision="$revision" \
+          -F local_username="<< parameters.username >>"
