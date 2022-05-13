@@ -1,0 +1,34 @@
+description: Install dependencies and run test command from build images hosted in ecr
+
+parameters:
+  executor-name:
+    type: enum
+    default: 'ecr-authed'
+    enum: ['build-images', 'dockerhub-authed', 'ecr-authed']
+  executor-tag:
+    type: string
+  task:
+    type: string
+    default: 'check'
+  service-name:
+    type: string
+  environment:
+    type: string
+  cache-key:
+    type: string
+    default: v0-dependencies
+  graph-name:
+    type: string
+    default: service-gateway-qoinz
+
+executor:
+  name: << parameters.executor-name >>
+  tag: << parameters.executor-tag >>
+
+steps:
+  - apollo-service-task:
+      cache-key: << parameters.cache-key >>
+      task: << parameters.task >>
+      service-name: << parameters.service-name >>
+      environment: << parameters.environment >>
+      graph-name: << parameters.graph-name >>

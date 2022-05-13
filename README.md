@@ -1,5 +1,10 @@
 # circleci-orbs
+
 Goodway CircleCI Orbs
+
+## Before Starting
+
+Verify you have the circleci installed on your machine. If not, run `brew install circleci` before starting.
 
 ## Getting Started
 

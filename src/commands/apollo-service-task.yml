@@ -1,0 +1,45 @@
+description: Runs Apollo service cli task
+
+parameters:
+  task:
+    type: string
+    default: 'check'
+  service-name:
+    type: string
+  environment:
+    type: string
+  cache-key:
+    type: string
+    default: v0-dependencies
+  graph-name:
+    type: string
+    default: service-gateway-qoinz
+
+steps:
+  - run:
+      name: Install rover
+      command: |
+        curl -sSL https://rover.apollo.dev/nix/v0.5.1 | sh
+        echo 'export PATH=$HOME/.rover/bin:$PATH' >> $BASH_ENV
+
+  - checkout
+
+  # Download and cache dependencies
+  - restore_cache:
+      keys:
+        - << parameters.cache-key >>-{{ checksum "package-lock.json" }}
+
+  - run:
+      name: Dependency Install
+      command: npm install
+
+  - run:
+      name: Generate schema dump
+      command: npm run dump:schema
+
+  - run:
+      name: apollo federation:<< parameters.task >>
+      command: |
+        cat tmp/schema.graphql | \
+        APOLLO_KEY=$APOLLO_FEDERATION_KEY \
+        rover subgraph << parameters.task >> << parameters.graph-name >>@<< parameters.environment >> --name << parameters.service-name >> --schema -
