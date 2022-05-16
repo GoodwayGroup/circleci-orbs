@@ -4,7 +4,7 @@ parameters:
   task:
     type: string
     default: 'check'
-  service-name:
+  app-name:
     type: string
   environment:
     type: string
@@ -42,4 +42,4 @@ steps:
       command: |
         cat tmp/schema.graphql | \
         APOLLO_KEY=$APOLLO_FEDERATION_KEY \
-        rover subgraph << parameters.task >> << parameters.graph-name >>@<< parameters.environment >> --name << parameters.service-name >> --schema -
+        rover subgraph << parameters.task >> << parameters.graph-name >>@<< parameters.environment >> --name << parameters.app-name >> --schema -

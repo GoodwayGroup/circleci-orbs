@@ -10,7 +10,7 @@ parameters:
   task:
     type: string
     default: 'check'
-  service-name:
+  app-name:
     type: string
   environment:
     type: string
@@ -29,6 +29,6 @@ steps:
   - apollo-service-task:
       cache-key: << parameters.cache-key >>
       task: << parameters.task >>
-      service-name: << parameters.service-name >>
+      app-name: << parameters.app-name >>
       environment: << parameters.environment >>
       graph-name: << parameters.graph-name >>
