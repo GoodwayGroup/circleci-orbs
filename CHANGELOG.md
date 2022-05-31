@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.1.0...v2.2.0) (2022-05-31)
+
+
+### Features
+
+* Added apollo-service-task for ecr ([#51](https://github.com/GoodwayGroup/circleci-orb/issues/51)) ([bcce660](https://github.com/GoodwayGroup/circleci-orb/commit/bcce66082996773d8f3505b917e65248083969e0))
+
 # [2.1.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.0.2...v2.1.0) (2022-02-17)
 
 
