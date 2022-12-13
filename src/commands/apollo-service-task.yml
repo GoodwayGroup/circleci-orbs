@@ -1,4 +1,4 @@
-description: Runs Apollo service cli task
+description: Run Apollo service cli task
 
 parameters:
   task:
