@@ -20,6 +20,9 @@ parameters:
   graph-name:
     type: string
     default: service-gateway-qoinz
+  is-subgraph:
+    type: boolean
+    default: true
 
 executor:
   name: << parameters.executor-name >>
@@ -32,3 +35,4 @@ steps:
       app-name: << parameters.app-name >>
       environment: << parameters.environment >>
       graph-name: << parameters.graph-name >>
+      is-subgraph: << parameters.is-subgraph >>
