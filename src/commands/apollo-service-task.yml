@@ -52,13 +52,12 @@ steps:
               rover subgraph << parameters.task >> << parameters.graph-name >>@<< parameters.environment >> --name << parameters.app-name >> --schema -
 
   - when:
-      - not:
-        condition:
-          equal: [<< parameters.is-subgraph >>, false]
-        steps:
-          - run:
-              name: apollo service:<< parameters.task >>
-              command: |
-                cat tmp/schema.graphql | \
-                APOLLO_KEY=$APOLLO_KEY \
-                rover graph << parameters.task >> << parameters.app-name >>@<< parameters.environment >> --schema -
+      condition:
+        equal: [<< parameters.is-subgraph >>, false]
+      steps:
+        - run:
+            name: apollo service:<< parameters.task >>
+            command: |
+              cat tmp/schema.graphql | \
+              APOLLO_KEY=$APOLLO_KEY \
+              rover graph << parameters.task >> << parameters.app-name >>@<< parameters.environment >> --schema -
