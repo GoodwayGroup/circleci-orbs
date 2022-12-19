@@ -1,4 +1,4 @@
-description: Runs Apollo service cli task
+description: Run Apollo service cli task
 
 parameters:
   task:
@@ -14,6 +14,9 @@ parameters:
   graph-name:
     type: string
     default: service-gateway-qoinz
+  is-subgraph:
+    type: boolean
+    default: true
 
 steps:
   - run:
@@ -37,9 +40,24 @@ steps:
       name: Generate schema dump
       command: npm run dump:schema
 
-  - run:
-      name: apollo federation:<< parameters.task >>
-      command: |
-        cat tmp/schema.graphql | \
-        APOLLO_KEY=$APOLLO_FEDERATION_KEY \
-        rover subgraph << parameters.task >> << parameters.graph-name >>@<< parameters.environment >> --name << parameters.app-name >> --schema -
+  - when:
+      condition:
+        equal: [<< parameters.is-subgraph >>, true]
+      steps:
+        - run:
+            name: apollo federation:<< parameters.task >>
+            command: |
+              cat tmp/schema.graphql | \
+              APOLLO_KEY=$APOLLO_FEDERATION_KEY \
+              rover subgraph << parameters.task >> << parameters.graph-name >>@<< parameters.environment >> --name << parameters.app-name >> --schema -
+
+  - when:
+      condition:
+        equal: [<< parameters.is-subgraph >>, false]
+      steps:
+        - run:
+            name: apollo service:<< parameters.task >>
+            command: |
+              cat tmp/schema.graphql | \
+              APOLLO_KEY=$APOLLO_KEY \
+              rover graph << parameters.task >> << parameters.app-name >>@<< parameters.environment >> --schema -

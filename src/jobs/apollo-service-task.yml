@@ -3,7 +3,7 @@ description: Run Apollo service cli task
 parameters:
   executor-name:
     type: enum
-    default: 'ecr-authed'
+    default: 'build-images'
     enum: ['build-images', 'dockerhub-authed', 'ecr-authed']
   executor-tag:
     type: string
@@ -36,4 +36,3 @@ steps:
       environment: << parameters.environment >>
       graph-name: << parameters.graph-name >>
       is-subgraph: << parameters.is-subgraph >>
-
