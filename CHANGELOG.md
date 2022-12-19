@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.2.0...v2.3.0) (2022-12-19)
+
+
+### Features
+
+* MS-3 Update apollo-service-task ([#58](https://github.com/GoodwayGroup/circleci-orb/issues/58)) ([dfbaf8e](https://github.com/GoodwayGroup/circleci-orb/commit/dfbaf8e9a2b92ff62e21ec793b29de02b5a69f2e))
+
 # [2.2.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.1.0...v2.2.0) (2022-05-31)
 
 
