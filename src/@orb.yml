@@ -10,3 +10,4 @@ orbs:
   docker: circleci/docker@1.2.1
   aws-ecr: circleci/aws-ecr@6.11.0
   coveralls: coveralls/coveralls@1.0.6
+  node: circleci/node@5.1.0

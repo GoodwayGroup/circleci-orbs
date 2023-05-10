@@ -1,15 +1,21 @@
 description: Install dependencies and run test command from build images hosted in ecr
 
 parameters:
+  # executor-name:
+  #   type: string
+  #   default: "node/default"
   executor-name:
     type: enum
     default: "ecr-authed"
     enum: ["build-images", "dockerhub-authed", "ecr-authed"]
   executor-tag:
     type: string
+  # executor-class:
+  #   type: string
+  #   default: small
   cache-key:
     type: string
-    default: v0-dependencies
+    default: v1
   coveralls-upload:
     type: boolean
     default: true
@@ -28,10 +34,21 @@ parameters:
       - run: npm run lint
     description: |
       Steps to run to lint a codebase
+  store-coverage-artifacts:
+    type: boolean
+    default: true
+    description: |
+      If enabled, stores the ./coveage directory as a build artifact
+  tar-coverage-artifacts:
+    type: boolean
+    default: true
+    description: |
+      If enabled, tars the ./coveage directory into coverage.tar for storage.
 
 executor:
   name: << parameters.executor-name >>
   tag: << parameters.executor-tag >>
+  # resource_class: << parameters.executor-class >>
 
 steps:
   - test-nodejs:
@@ -40,3 +57,5 @@ steps:
       test-steps: << parameters.test-steps >>
       lint: << parameters.lint >>
       lint-steps: << parameters.lint-steps >>
+      store-coverage-artifacts: << parameters.store-coverage-artifacts >>
+      tar-coverage-artifacts: << parameters.tar-coverage-artifacts >>

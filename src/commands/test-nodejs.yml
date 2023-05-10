@@ -3,7 +3,7 @@ description: Install dependencies and run test command
 parameters:
   cache-key:
     type: string
-    default: v0-dependencies
+    default: v1
   coveralls-upload:
     type: boolean
     default: true
@@ -22,24 +22,46 @@ parameters:
       - run: npm run lint
     description: |
       Steps to run to lint a codebase
+  store-coverage-artifacts:
+    type: boolean
+    default: true
+    description: |
+      If enabled, stores the ./coveage directory as a build artifact
+  tar-coverage-artifacts:
+    type: boolean
+    default: true
+    description: |
+      If enabled, tars the ./coveage directory into coverage.tar for storage.
 
 steps:
   - checkout
-  - setup_remote_docker
+  - node/install-packages:
+      cache-path: ./node_modules
+      include-branch-in-cache-key: false
+      cache-version: << parameters.cache-key >>
 
-  # Download and cache dependencies
-  - restore_cache:
-      keys:
-        - << parameters.cache-key >>-{{ checksum "package-lock.json" }}
 
-  - run:
-      name: Dependency Install
-      command: npm install
+  # # Download and cache dependencies
+  # - restore_cache:
+  #     keys:
+  #       - << parameters.cache-key >>-{{ checksum "package-lock.json" }}
 
-  - save_cache:
-      paths:
-        - node_modules
-      key: << parameters.cache-key >>-{{ checksum "package-lock.json" }}
+  # - run:
+  #     name: Dependency Install
+  #     command: |
+  #       if [ -d "node_modules" ]; then
+  #         echo 'npm install'
+  #         npm install;
+  #       else
+  #         echo 'npm ci'
+  #         npm ci;
+  #       fi
+
+
+  # - save_cache:
+  #     paths:
+  #       - node_modules
+  #     key: << parameters.cache-key >>-{{ checksum "package-lock.json" }}
 
   - when:
       condition: <<parameters.lint>>
@@ -52,5 +74,20 @@ steps:
       steps:
         - coveralls/upload
 
-  - store_artifacts:
-      path: ./coverage
+  - when:
+      condition: << parameters.store-coverage-artifacts >>
+      steps:
+        - when:
+            condition:
+              not: << parameters.tar-coverage-artifacts >>
+            steps:
+              - store_artifacts:
+                  path: ./coverage
+        - when:
+            condition: << parameters.tar-coverage-artifacts >>
+            steps:
+              - run:
+                  name: Compress Coverage Artifacts
+                  command: tar -cvzf coverage.tar ./coverage
+              - store_artifacts:
+                  path: coverage.tar
