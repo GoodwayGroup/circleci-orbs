@@ -1,6 +1,7 @@
-description: Common build image executor
+description: Common cimg/node image executor
 parameters:
   tag:
+    default: lts
     type: string
   resource_class:
     default: large
@@ -16,8 +17,5 @@ parameters:
     type: enum
 working_directory: ~/repo
 docker:
-  - image: goodwaygroup/circleci-build-images:<< parameters.tag >>
-    auth:
-      username: $DOCKER_USER
-      password: $DOCKER_PASS
+  - image:  cimg/node:<< parameters.tag >>
 resource_class: << parameters.resource_class >>

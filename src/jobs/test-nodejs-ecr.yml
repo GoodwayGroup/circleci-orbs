@@ -1,18 +1,24 @@
 description: Install dependencies and run test command from build images hosted in ecr
 
 parameters:
-  # executor-name:
-  #   type: string
-  #   default: "node/default"
   executor-name:
     type: enum
     default: "ecr-authed"
-    enum: ["build-images", "dockerhub-authed", "ecr-authed"]
+    enum: ["build-images", "dockerhub-authed", "ecr-authed", "node-default"]
   executor-tag:
     type: string
-  # executor-class:
-  #   type: string
-  #   default: small
+  executor-resource-class:
+    default: large
+    description: Configure the executor resource class
+    enum:
+      - small
+      - medium
+      - medium+
+      - large
+      - xlarge
+      - 2xlarge
+      - 2xlarge+
+    type: enum
   cache-key:
     type: string
     default: v1
@@ -48,7 +54,7 @@ parameters:
 executor:
   name: << parameters.executor-name >>
   tag: << parameters.executor-tag >>
-  # resource_class: << parameters.executor-class >>
+  resource_class: << parameters.executor-resource-class >>
 
 steps:
   - test-nodejs:
