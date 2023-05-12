@@ -39,6 +39,14 @@ steps:
       cache-path: ./node_modules
       include-branch-in-cache-key: false
       cache-version: << parameters.cache-key >>
+      override-ci-command: |
+        if [ -d "node_modules" ]; then
+          echo 'npm install'
+          npm install;
+        else
+          echo 'npm ci'
+          npm ci;
+        fi
 
 
   # # Download and cache dependencies
