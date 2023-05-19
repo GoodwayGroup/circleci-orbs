@@ -4,9 +4,21 @@ parameters:
   executor-name:
     type: enum
     default: 'ecr-authed'
-    enum: ['build-images', 'dockerhub-authed', 'ecr-authed']
+    enum: ["build-images", "dockerhub-authed", "ecr-authed", "node-default"]
   executor-tag:
     type: string
+  executor-resource-class:
+    default: small
+    description: Configure the executor resource class
+    enum:
+      - small
+      - medium
+      - medium+
+      - large
+      - xlarge
+      - 2xlarge
+      - 2xlarge+
+    type: enum
   task:
     type: string
     default: 'check'
@@ -27,6 +39,7 @@ parameters:
 executor:
   name: << parameters.executor-name >>
   tag: << parameters.executor-tag >>
+  resource_class: << parameters.executor-resource-class >>
 
 steps:
   - apollo-service-task:
