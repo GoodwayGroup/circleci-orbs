@@ -1,0 +1,35 @@
+description: Upload multiple source maps from a single directory to Rollbar. This must be done before any Rollbar deployment notifications.
+parameters:
+  token-var:
+    type: env_var_name
+    default: ROLLBAR_TOKEN
+  minified-url-base:
+    type: string
+  source-maps-dir:
+    type: string
+    default: ./build/static
+steps:
+  -  determine-rollbar-code-version:
+      variable: ROLLBAR_CODE_VERSION
+  - run:
+      name: Upload source maps to Rollbar
+      command: |
+        sourceDir="<<parameters.source-maps-dir>>"
+        # Convert source-maps-dir into a regex safe pattern to eventually be replaced with minfied-url-base
+        pattern=${sourceDir//\//\\\/}
+
+        revision="$([[ ! -z "${CIRCLE_TAG}" ]] && echo ${CIRCLE_TAG//\//-} || ([[ ! -z "${CIRCLE_BRANCH}" ]] && echo ${CIRCLE_BRANCH//\//-} || echo ${CIRCLE_SHA1}))"
+
+        # Find all the .map files in the source-maps-dir
+        MAP_FILES=`ls <<parameters.source-maps-dir>>/*.map`
+        for mapFile in $MAP_FILES
+        do
+          # Remove map extrension to get the js file name
+          jsFile=${mapFile/.map/}
+
+          curl https://api.rollbar.com/api/1/sourcemap/ \
+            -F access_token="${<< parameters.token-var >>}" \
+            -F version="${ROLLBAR_CODE_VERSION}" \
+            -F minified_url=${jsFile/$pattern/<<parameters.minified-url-base>>} \
+            -F source_map=@$mapFile
+        done
