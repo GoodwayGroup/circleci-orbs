@@ -41,6 +41,16 @@ parameters:
       - run: npm run lint
     description: |
       Steps to run to lint a codebase
+  store-coverage-artifacts:
+    type: boolean
+    default: true
+    description: |
+      If enabled, stores the ./coveage directory as a build artifact
+  tar-coverage-artifacts:
+    type: boolean
+    default: true
+    description: |
+      If enabled, tars the ./coveage directory into coverage.tar for storage.
 
 executor:
   name: << parameters.executor-name >>
