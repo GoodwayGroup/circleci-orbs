@@ -1,0 +1,17 @@
+description: Installs npm dependencies useing npm ci unless there is an exsting node_modules then uses npm install
+parameters:
+  step-name:
+    default: Dependency Install
+    description: 'Specify a custom step name for this command, if desired'
+    type: string
+steps:
+  - run:
+      name: << parameters.step-name >>
+      command: |
+        if [ -d "node_modules" ]; then
+          echo 'npm install'
+          npm install;
+        else
+          echo 'npm ci'
+          npm ci;
+        fi
