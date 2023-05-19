@@ -4,9 +4,22 @@ parameters:
     type: string
   tag:
     type: string
+  resource_class:
+    default: large
+    description: Configure the executor resource class
+    enum:
+      - small
+      - medium
+      - medium+
+      - large
+      - xlarge
+      - 2xlarge
+      - 2xlarge+
+    type: enum
 working_directory: ~/repo
 docker:
   - image: << parameters.repo >>:<< parameters.tag >>
     auth:
       username: $DOCKER_USER
       password: $DOCKER_PASS
+resource_class: << parameters.resource_class >>
