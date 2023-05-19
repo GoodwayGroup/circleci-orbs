@@ -1,0 +1,15 @@
+description: Determines the Rollbar code version and assign it to an environment var
+
+parameters:
+  variable:
+    default: ROLLBAR_CODE_VERSION
+    description: 'Variable to export to BASH_ENV'
+    type: env_var_name
+
+steps:
+  - run:
+      name: 'Determine Rollbar Code Version'
+      command: |
+        ROLLBAR_CODE_VERSION=$([[ ! -z "${CIRCLE_TAG}" ]] && echo ${CIRCLE_TAG//\//-} || ([[ ! -z "${CIRCLE_BRANCH}" ]] && echo ${CIRCLE_BRANCH//\//-} || echo ${CIRCLE_SHA1}))
+        echo "export <<parameters.variable>>=${ROLLBAR_CODE_VERSION}" >> ${BASH_ENV}
+        cat ${BASH_ENV}
