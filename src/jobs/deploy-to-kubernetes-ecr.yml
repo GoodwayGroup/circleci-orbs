@@ -8,6 +8,18 @@ parameters:
   executor-tag:
     type: string
     default: eks-latest
+  executor-resource-class:
+    default: small
+    description: Configure the executor resource class
+    enum:
+      - small
+      - medium
+      - medium+
+      - large
+      - xlarge
+      - 2xlarge
+      - 2xlarge+
+    type: enum
   kube-path:
     type: string
     default: .kube/
@@ -28,6 +40,7 @@ parameters:
 executor:
   name: << parameters.executor-name >>
   tag: << parameters.executor-tag >>
+  resource_class: << parameters.executor-resource-class >>
 
 steps:
   - deploy-to-kubernetes:

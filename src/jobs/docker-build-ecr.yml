@@ -8,6 +8,18 @@ parameters:
   executor-tag:
     type: string
     default: node-latest
+  executor-resource-class:
+    default: medium
+    description: Configure the executor resource class
+    enum:
+      - small
+      - medium
+      - medium+
+      - large
+      - xlarge
+      - 2xlarge
+      - 2xlarge+
+    type: enum
   registry-type:
     type: enum
     default: ecr
@@ -34,6 +46,7 @@ parameters:
 executor:
   name: << parameters.executor-name >>
   tag: << parameters.executor-tag >>
+  resource_class: << parameters.executor-resource-class >>
 
 steps:
   - docker-build:
