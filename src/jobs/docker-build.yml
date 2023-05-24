@@ -30,6 +30,9 @@ parameters:
   pre-push-steps:
     type: steps
     default: []
+  use-docker-layer-caching:
+    type: boolean
+    default: true
 
 executor:
   name: << parameters.executor-name >>
@@ -44,3 +47,4 @@ steps:
       push: << parameters.push >>
       pre-build-steps: << parameters.pre-build-steps >>
       pre-push-steps: << parameters.pre-push-steps >>
+      use-docker-layer-caching: << parameters.use-docker-layer-caching >>
