@@ -1,3 +1,10 @@
+# [2.5.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.4.0...v2.5.0) (2023-05-25)
+
+
+### Features
+
+* enabling docker layer caching on docker-build command ([#66](https://github.com/GoodwayGroup/circleci-orb/issues/66)) ([61d5df8](https://github.com/GoodwayGroup/circleci-orb/commit/61d5df82cca3fd2671a0463df9eaadb30c1d80a4))
+
 # [2.4.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.3.0...v2.4.0) (2023-05-25)
 
 
