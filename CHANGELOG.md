@@ -1,3 +1,14 @@
+# [2.4.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.3.0...v2.4.0) (2023-05-25)
+
+
+### Features
+
+* RMN-191 upload sourcemaps to rollbar ([997ce20](https://github.com/GoodwayGroup/circleci-orb/commit/997ce2035706a87172dbbcbbd234f5afe143d1bf))
+* SDG-16 add resource_class to docker-build and deploy-kube ([b0e3080](https://github.com/GoodwayGroup/circleci-orb/commit/b0e30809914f9ad41049cbaf78ae375aab95459b))
+* SDG-16 added cimg/node image executor with resource_class ([c0437de](https://github.com/GoodwayGroup/circleci-orb/commit/c0437de3611d6ca2ea2f53318030806dbb8c94f3))
+* SDG-16 conditionally store and tar ./coverage dir ([8feb6f2](https://github.com/GoodwayGroup/circleci-orb/commit/8feb6f252ed9228a2687b5b28ac76304fc956101))
+* SDG-16 new command to call npm ci or npm install based on node_modules ([592a683](https://github.com/GoodwayGroup/circleci-orb/commit/592a6838406e34ccc82b54a6e7cba02a2be0c76d))
+
 # [2.3.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.2.0...v2.3.0) (2022-12-19)
 
 
