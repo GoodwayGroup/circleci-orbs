@@ -19,7 +19,7 @@
       }
     ],
     [
-      "semantic-release-circleci-orb",
+      "@outreach/semantic-release-circleci-orb",
       {
         "orbName": "goodwaygroup/circleci-orb",
         "orbPath": "packed-orb.yml"
