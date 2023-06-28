@@ -50,6 +50,11 @@ parameters:
     default: true
     description: |
       If enabled, tars the ./coveage directory into coverage.tar for storage.
+  use-remote-docker:
+    type: boolean
+    default: false
+    description: |
+      If enabled, uses the remote docker executor instead of the machine executor.
 
 executor:
   name: << parameters.executor-name >>
@@ -65,3 +70,4 @@ steps:
       lint-steps: << parameters.lint-steps >>
       store-coverage-artifacts: << parameters.store-coverage-artifacts >>
       tar-coverage-artifacts: << parameters.tar-coverage-artifacts >>
+      use-remote-docker: << parameters.use-remote-docker >>

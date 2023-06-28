@@ -32,10 +32,19 @@ parameters:
     default: true
     description: |
       If enabled, tars the ./coveage directory into coverage.tar for storage.
+  use-remote-docker:
+    type: boolean
+    default: false
+    description: |
+      If enabled, uses the remote docker executor instead of the machine executor.
 
 steps:
   - checkout
-  - setup_remote_docker
+
+  - when:
+      condition: <<parameters.use-remote-docker>>
+      steps:
+        - setup_remote_docker
 
   # Download and cache dependencies
   - restore_cache:
