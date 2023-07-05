@@ -68,7 +68,7 @@ parameters:
       If enabled, tars the ./coverage directory into coverage.tar for storage.
   tar-coverage-artifacts-path:
     type: string
-    default: /test-reports
+    default: test-reports/
     description: |
       Path of coverage directory
 
