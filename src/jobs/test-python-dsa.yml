@@ -66,6 +66,11 @@ parameters:
     default: true
     description: |
       If enabled, tars the ./coverage directory into coverage.tar for storage.
+  tar-coverage-artifacts-path:
+    type: string
+    default: /test-reports
+    description: |
+      Path of coverage directory
 
 executor:
   name: << parameters.executor-name >>
@@ -80,3 +85,4 @@ steps:
       test-steps: << parameters.test-steps >>
       lint: << parameters.lint >>
       lint-steps: << parameters.lint-steps >>
+      tar-coverage-artifacts-path: << parameters.tar-coverage-artifacts-path >>

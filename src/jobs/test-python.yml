@@ -29,6 +29,7 @@ parameters:
   lint-steps:
     default:
       - run:
+          name: Run lint
           command: poetry run poe lint
     description: |
       Steps to run to lint a codebase
@@ -36,6 +37,7 @@ parameters:
   test-steps:
     default:
       - run:
+          name: Run unit tests
           command: poetry run poe test
     description: |
       Steps to run to test a codebase
@@ -50,6 +52,11 @@ parameters:
     default: true
     description: |
       If enabled, tars the ./coverage directory into coverage.tar for storage.
+  tar-coverage-artifacts-path:
+    type: string
+    default: ./coverage
+    description: |
+      Path of coverage directory
 
 executor: 
   name: dockerhub-authed
@@ -64,3 +71,4 @@ steps:
       test-steps: << parameters.test-steps >>
       lint: << parameters.lint >>
       lint-steps: << parameters.lint-steps >>
+      tar-coverage-artifacts-path: << parameters.tar-coverage-artifacts-path >>

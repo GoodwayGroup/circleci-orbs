@@ -46,6 +46,11 @@ parameters:
     default: true
     description: |
       If enabled, tars the ./coverage directory into coverage.tar for storage.
+  tar-coverage-artifacts-path:
+    type: string
+    default: ./coverage
+    description: |
+      Path of coverage directory
 
 steps:
   - checkout
@@ -82,12 +87,12 @@ steps:
               not: << parameters.tar-coverage-artifacts >>
             steps:
               - store_artifacts:
-                  path: ./coverage
+                  path: << parameters.tar-coverage-artifacts-path >>
         - when:
             condition: << parameters.tar-coverage-artifacts >>
             steps:
               - run:
                   name: Compress Coverage Artifacts
-                  command: tar -cvzf coverage.tar ./coverage
+                  command: tar -cvzf coverage.tar << parameters.tar-coverage-artifacts-path >>
               - store_artifacts:
-                  path: coverage.tar
+                  path: << parameters.tar-coverage-artifacts-path >>
