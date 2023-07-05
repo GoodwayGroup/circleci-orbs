@@ -13,6 +13,14 @@ parameters:
   coveralls-upload:
     type: boolean
     default: true
+  coveralls-steps:
+    default:
+      - run:
+          name: Push to Coveralls
+          command: coveralls/upload
+    description: |
+      Steps to run to send Coveralls report for a codebase
+    type: steps
   lint:
     default: true
     description: |
@@ -32,6 +40,16 @@ parameters:
     description: |
       Steps to run to test a codebase
     type: steps
+  store-coverage-artifacts:
+    type: boolean
+    default: true
+    description: |
+      If enabled, stores the ./coverage directory as a build artifact
+  tar-coverage-artifacts:
+    type: boolean
+    default: true
+    description: |
+      If enabled, tars the ./coverage directory into coverage.tar for storage.
 
 executor: 
   name: dockerhub-authed
@@ -39,32 +57,10 @@ executor:
   tag: << parameters.executor-tag >>
 
 steps:
-  - checkout
-
-  # Download and cache dependencies
-  - restore_cache:
-      keys:
-        - << parameters.cache-key >>-{{ checksum "poetry.lock" }}
-
-  - run:
-      name: Dependency Install
-      command: poetry install
-
-  - save_cache:
-      paths:
-        - .venv
-      key: << parameters.cache-key >>-{{ checksum "poetry.lock" }}
-
-  - when:
-      condition: <<parameters.lint>>
-      steps: <<parameters.lint-steps>>
-
-  - steps: << parameters.test-steps >>
-
-  - when: 
-      condition: << parameters.coveralls-upload >>
-      steps: 
-        - coveralls/upload
-
-  - store_artifacts:
-      path: ./coverage
+  - test-python:
+      cache-key: << parameters.cache-key >>
+      coveralls-upload: << parameters.coveralls-upload >>
+      coveralls-steps:  << parameters.coveralls-steps >>
+      test-steps: << parameters.test-steps >>
+      lint: << parameters.lint >>
+      lint-steps: << parameters.lint-steps >>
