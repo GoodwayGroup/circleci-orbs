@@ -45,6 +45,7 @@ parameters:
   lint-steps:
     default:
       - run:
+          name: Run lint
           command: poetry run poe lint
     description: |
       Steps to run to lint a codebase
@@ -52,6 +53,7 @@ parameters:
   test-steps:
     default:
       - run:
+          name: Run unit tests
           command: poetry run poe coverage
     description: |
       Steps to run to test a codebase
