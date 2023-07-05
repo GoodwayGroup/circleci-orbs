@@ -1,0 +1,93 @@
+description: Install dependencies and run test command
+
+parameters:
+  cache-key:
+    type: string
+    default: v0-dependencies
+  coveralls-upload:
+    type: boolean
+    default: true
+  coveralls-steps:
+    default:
+      - run:
+          name: Push to Coveralls
+          command: coveralls/upload
+    description: |
+      Steps to run to send Coveralls report for a codebase
+    type: steps
+  lint:
+    default: true
+    description: |
+      Lint codebase before test
+    type: boolean
+  lint-steps:
+    default:
+      - run:
+          name: Run lint
+          command: poetry run poe lint
+    description: |
+      Steps to run to lint a codebase
+    type: steps
+  test-steps:
+    default:
+      - run:
+          name: Run unit tests
+          command: poetry run poe test
+    description: |
+      Steps to run to test a codebase
+    type: steps
+  store-coverage-artifacts:
+    type: boolean
+    default: true
+    description: |
+      If enabled, stores the ./coverage directory as a build artifact
+  tar-coverage-artifacts:
+    type: boolean
+    default: true
+    description: |
+      If enabled, tars the ./coverage directory into coverage.tar for storage.
+
+steps:
+  - checkout
+
+  # Download and cache dependencies
+  - restore_cache:
+      keys:
+        - << parameters.cache-key >>-{{ checksum "poetry.lock" }}
+
+  - run:
+      name: Dependency Install
+      command: poetry install
+
+  - save_cache:
+      paths:
+        - .venv
+      key: << parameters.cache-key >>-{{ checksum "poetry.lock" }}
+
+  - when:
+      condition: <<parameters.lint>>
+      steps: <<parameters.lint-steps>>
+
+  - steps: << parameters.test-steps >>
+
+  - when:
+      condition: << parameters.coveralls-upload >>
+      steps: <<parameters.coveralls-steps>>
+
+  - when:
+      condition: << parameters.store-coverage-artifacts >>
+      steps:
+        - when:
+            condition:
+              not: << parameters.tar-coverage-artifacts >>
+            steps:
+              - store_artifacts:
+                  path: ./coverage
+        - when:
+            condition: << parameters.tar-coverage-artifacts >>
+            steps:
+              - run:
+                  name: Compress Coverage Artifacts
+                  command: tar -cvzf coverage.tar ./coverage
+              - store_artifacts:
+                  path: coverage.tar
