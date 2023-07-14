@@ -1,13 +1,6 @@
 description: Install dependencies and run test command
 
 parameters:
-  executor-name:
-    type: enum
-    default: "python-default"
-    enum: ["dockerhub-authed", "python-default"]
-  executor-repo:
-    type: string
-    default: "cimg"
   executor-tag:
     type: string
     default: "3.11.2"
@@ -45,8 +38,8 @@ parameters:
   lint-steps:
     default:
       - run:
-          name: Run lint
-          command: poetry run poe lint
+          name: Run lint check
+          command: poetry run poe lint_check
     description: |
       Steps to run to lint a codebase
     type: steps
@@ -75,8 +68,7 @@ parameters:
       Path of coverage directory
 
 executor:
-  name: << parameters.executor-name >>
-  repo: << parameters.executor-repo >>
+  name: python-default
   tag: << parameters.executor-tag >>
 
 steps:
