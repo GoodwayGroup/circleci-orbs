@@ -1,9 +1,6 @@
 description: Install dependencies and run test command
 
 parameters:
-  executor-repo:
-    type: string
-    default: circleci/python
   executor-tag:
     type: string
     default: "3.7"
@@ -58,9 +55,8 @@ parameters:
     description: |
       Path of coverage directory
 
-executor: 
-  name: dockerhub-authed
-  repo: << parameters.executor-repo >>
+executor:
+  name: python-default
   tag: << parameters.executor-tag >>
 
 steps:
