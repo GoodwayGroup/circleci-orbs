@@ -95,4 +95,4 @@ steps:
                   name: Compress Coverage Artifacts
                   command: tar -cvzf coverage.tar << parameters.tar-coverage-artifacts-path >>
               - store_artifacts:
-                  path: << parameters.tar-coverage-artifacts-path >>
+                  path: coverage.tar
