@@ -1,3 +1,51 @@
+# [2.6.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.5.0...v2.6.0) (2023-07-18)
+
+
+### Bug Fixes
+
+* adding the --force npm flag to overcome version conflicts ([#73](https://github.com/GoodwayGroup/circleci-orb/issues/73)) ([20da3e4](https://github.com/GoodwayGroup/circleci-orb/commit/20da3e420112ede8362be3ff80d9c0827223ada5))
+
+
+### Features
+
+* Adds conditional logic for remote docker in tests ([#71](https://github.com/GoodwayGroup/circleci-orb/issues/71)) ([110762c](https://github.com/GoodwayGroup/circleci-orb/commit/110762c2acedb2d7587479830d41ada7a52b1367))
+
+# [2.6.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.5.0...v2.6.0) (2023-07-18)
+
+
+### Bug Fixes
+
+* adding the --force npm flag to overcome version conflicts ([#73](https://github.com/GoodwayGroup/circleci-orb/issues/73)) ([20da3e4](https://github.com/GoodwayGroup/circleci-orb/commit/20da3e420112ede8362be3ff80d9c0827223ada5))
+
+
+### Features
+
+* Adds conditional logic for remote docker in tests ([#71](https://github.com/GoodwayGroup/circleci-orb/issues/71)) ([110762c](https://github.com/GoodwayGroup/circleci-orb/commit/110762c2acedb2d7587479830d41ada7a52b1367))
+
+# [2.6.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.5.0...v2.6.0) (2023-07-18)
+
+
+### Bug Fixes
+
+* adding the --force npm flag to overcome version conflicts ([#73](https://github.com/GoodwayGroup/circleci-orb/issues/73)) ([20da3e4](https://github.com/GoodwayGroup/circleci-orb/commit/20da3e420112ede8362be3ff80d9c0827223ada5))
+
+
+### Features
+
+* Adds conditional logic for remote docker in tests ([#71](https://github.com/GoodwayGroup/circleci-orb/issues/71)) ([110762c](https://github.com/GoodwayGroup/circleci-orb/commit/110762c2acedb2d7587479830d41ada7a52b1367))
+
+# [2.6.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.5.0...v2.6.0) (2023-07-18)
+
+
+### Bug Fixes
+
+* adding the --force npm flag to overcome version conflicts ([#73](https://github.com/GoodwayGroup/circleci-orb/issues/73)) ([20da3e4](https://github.com/GoodwayGroup/circleci-orb/commit/20da3e420112ede8362be3ff80d9c0827223ada5))
+
+
+### Features
+
+* Adds conditional logic for remote docker in tests ([#71](https://github.com/GoodwayGroup/circleci-orb/issues/71)) ([110762c](https://github.com/GoodwayGroup/circleci-orb/commit/110762c2acedb2d7587479830d41ada7a52b1367))
+
 # [2.5.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.4.0...v2.5.0) (2023-05-25)
 
 
