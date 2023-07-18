@@ -45,12 +45,12 @@ parameters:
     type: boolean
     default: true
     description: |
-      If enabled, stores the ./coveage directory as a build artifact
+      If enabled, stores the ./coverage directory as a build artifact
   tar-coverage-artifacts:
     type: boolean
     default: true
     description: |
-      If enabled, tars the ./coveage directory into coverage.tar for storage.
+      If enabled, tars the ./coverage directory into coverage.tar for storage.
   use-remote-docker:
     type: boolean
     default: false

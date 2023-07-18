@@ -7,21 +7,35 @@ parameters:
   coveralls-upload:
     type: boolean
     default: true
-  test-steps:
-    type: steps
+  coveralls-steps:
     default:
-      - run: npm test
+      - run:
+          name: Push to Coveralls
+          command: coveralls/upload
+    description: |
+      Steps to run to send Coveralls report for a codebase
+    type: steps
   lint:
     default: true
     description: |
       Lint codebase before test
     type: boolean
   lint-steps:
-    type: steps
     default:
-      - run: npm run lint
+      - run:
+          name: Run lint
+          command: poetry run poe lint
     description: |
       Steps to run to lint a codebase
+    type: steps
+  test-steps:
+    default:
+      - run:
+          name: Run unit tests
+          command: poetry run poe test
+    description: |
+      Steps to run to test a codebase
+    type: steps
   store-coverage-artifacts:
     type: boolean
     default: true
@@ -32,31 +46,28 @@ parameters:
     default: true
     description: |
       If enabled, tars the ./coverage directory into coverage.tar for storage.
-  use-remote-docker:
-    type: boolean
-    default: false
+  tar-coverage-artifacts-path:
+    type: string
+    default: ./coverage
     description: |
-      If enabled, uses the remote docker executor instead of the machine executor.
+      Path of coverage directory
 
 steps:
   - checkout
 
-  - when:
-      condition: <<parameters.use-remote-docker>>
-      steps:
-        - setup_remote_docker
-
   # Download and cache dependencies
   - restore_cache:
       keys:
-        - << parameters.cache-key >>-{{ checksum "package-lock.json" }}
+        - << parameters.cache-key >>-{{ checksum "poetry.lock" }}
 
-  - npm-install-or-ci
+  - run:
+      name: Dependency Install
+      command: poetry install
 
   - save_cache:
       paths:
-        - node_modules
-      key: << parameters.cache-key >>-{{ checksum "package-lock.json" }}
+        - .venv
+      key: << parameters.cache-key >>-{{ checksum "poetry.lock" }}
 
   - when:
       condition: <<parameters.lint>>
@@ -66,8 +77,7 @@ steps:
 
   - when:
       condition: << parameters.coveralls-upload >>
-      steps:
-        - coveralls/upload
+      steps: <<parameters.coveralls-steps>>
 
   - when:
       condition: << parameters.store-coverage-artifacts >>
@@ -77,12 +87,12 @@ steps:
               not: << parameters.tar-coverage-artifacts >>
             steps:
               - store_artifacts:
-                  path: ./coverage
+                  path: << parameters.tar-coverage-artifacts-path >>
         - when:
             condition: << parameters.tar-coverage-artifacts >>
             steps:
               - run:
                   name: Compress Coverage Artifacts
-                  command: tar -cvzf coverage.tar ./coverage
+                  command: tar -cvzf coverage.tar << parameters.tar-coverage-artifacts-path >>
               - store_artifacts:
                   path: coverage.tar

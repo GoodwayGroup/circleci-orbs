@@ -3,7 +3,19 @@ description: Install dependencies and run test command
 parameters:
   executor-tag:
     type: string
-    default: "3.7"
+    default: "3.11.2"
+  executor-resource-class:
+    default: large
+    description: Configure the executor resource class
+    enum:
+      - small
+      - medium
+      - medium+
+      - large
+      - xlarge
+      - 2xlarge
+      - 2xlarge+
+    type: enum
   cache-key:
     type: string
     default: v0-dependencies
@@ -14,7 +26,7 @@ parameters:
     default:
       - run:
           name: Push to Coveralls
-          command: coveralls/upload
+          command: poetry run poe coveralls
     description: |
       Steps to run to send Coveralls report for a codebase
     type: steps
@@ -26,8 +38,8 @@ parameters:
   lint-steps:
     default:
       - run:
-          name: Run lint
-          command: poetry run poe lint
+          name: Run lint check
+          command: poetry run poe lint_check
     description: |
       Steps to run to lint a codebase
     type: steps
@@ -35,7 +47,7 @@ parameters:
     default:
       - run:
           name: Run unit tests
-          command: poetry run poe test
+          command: poetry run poe coverage
     description: |
       Steps to run to test a codebase
     type: steps
@@ -51,7 +63,7 @@ parameters:
       If enabled, tars the ./coverage directory into coverage.tar for storage.
   tar-coverage-artifacts-path:
     type: string
-    default: ./coverage
+    default: test-reports/
     description: |
       Path of coverage directory
 
