@@ -45,6 +45,12 @@ parameters:
   use-docker-layer-caching:
     type: boolean
     default: true
+  extra-build-args:
+    default: '--build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)"'
+    type: string
+  additional-tags:
+    type: string
+    default: ""
 
 executor:
   name: << parameters.executor-name >>
@@ -61,3 +67,5 @@ steps:
       pre-build-steps: << parameters.pre-build-steps >>
       pre-push-steps: << parameters.pre-push-steps >>
       use-docker-layer-caching: << parameters.use-docker-layer-caching >>
+      extra-build-args: << parameters.extra-build-args >>
+      additional-tags: << parameters.additional-tags >>

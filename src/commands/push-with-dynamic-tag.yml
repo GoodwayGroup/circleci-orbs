@@ -20,5 +20,5 @@ steps:
   - deploy:
       command: >
         docker push <<parameters.registry>>/<<
-        parameters.image>>:${<<parameters.tag-env>>}
+        parameters.image>> --all-tags
       name: <<parameters.step-name>>
