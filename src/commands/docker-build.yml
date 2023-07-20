@@ -32,6 +32,7 @@ parameters:
   additional-tags:
     type: string
     default: ""
+    description: Space separated names for additional images tags.
 
 steps:
   - checkout
