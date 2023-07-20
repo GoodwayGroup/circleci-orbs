@@ -39,21 +39,21 @@ steps:
   - setup_remote_docker:
       docker_layer_caching: << parameters.use-docker-layer-caching >>
 
-#  - when:
-#      condition:
-#        equal: ["ecr", << parameters.registry-type >>]
-#      steps:
-#        - aws-ecr/ecr-login:
-#            account-url: << parameters.registry-url >>
-#            region: AWS_REGION
-#
-#  - when:
-#      condition:
-#        equal: ["dockerhub", << parameters.registry-type >>]
-#      steps:
-#        - docker/check:
-#            docker-password: DOCKER_PASS
-#            docker-username: DOCKER_USER
+  - when:
+      condition:
+        equal: ["ecr", << parameters.registry-type >>]
+      steps:
+        - aws-ecr/ecr-login:
+            account-url: << parameters.registry-url >>
+            region: AWS_REGION
+
+  - when:
+      condition:
+        equal: ["dockerhub", << parameters.registry-type >>]
+      steps:
+        - docker/check:
+            docker-password: DOCKER_PASS
+            docker-username: DOCKER_USER
 
   - determine-docker-tag
 
