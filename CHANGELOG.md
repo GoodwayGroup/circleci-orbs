@@ -1,3 +1,10 @@
+# [2.7.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.6.0...v2.7.0) (2023-07-20)
+
+
+### Features
+
+* **args-and-tags:** add extra build args and retag build ([#75](https://github.com/GoodwayGroup/circleci-orb/issues/75)) ([b1cb67a](https://github.com/GoodwayGroup/circleci-orb/commit/b1cb67a923687b37ff5c014af78d5fbe4ed382bf))
+
 # [2.6.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.5.0...v2.6.0) (2023-07-18)
 
 
