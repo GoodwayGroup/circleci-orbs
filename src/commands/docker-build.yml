@@ -72,8 +72,8 @@ steps:
             name: Re-tag dynamic docker build with additional tags
             command: |
               for i in << parameters.additional-tags >>; do
-                docker tag ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${DOCKER_TAG} \
-                ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:$i
+                docker tag ${<< parameters.registry-url >>}/${<< parameters.image-namespace >>}/${<< parameters.image-repo >>}:${DOCKER_TAG} \
+                ${<< parameters.registry-url >>}/${<< parameters.image-namespace >>}/${<< parameters.image-repo >>}:$i
               done
 
   - when:
