@@ -1,3 +1,5 @@
+## [2.7.1](https://github.com/GoodwayGroup/circleci-orb/compare/v2.7.0...v2.7.1) (2023-07-26)
+
 # [2.7.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.6.0...v2.7.0) (2023-07-20)
 
 
