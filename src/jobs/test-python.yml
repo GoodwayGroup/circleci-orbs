@@ -14,7 +14,7 @@ parameters:
     default:
       - run:
           name: Push to Coveralls
-          command: coveralls/upload
+          command: poetry run poe coveralls
     description: |
       Steps to run to send Coveralls report for a codebase
     type: steps
