@@ -1,0 +1,97 @@
+description: Deploy an image to kubernetes via kustomize
+
+parameters:
+  # kube-path:
+  #   type: string
+  #   default: .kube/
+  # environment:
+  #   type: string
+  # notification-channel:
+  #   type: string
+  #   default:
+  # app-name:
+  #   type: string
+  wait-for-rollout:
+    type: boolean
+    default: true
+  post-deploy-steps:
+    type: steps
+    default: []
+  cluster-name:
+    type: string
+  image-name:
+    type: string
+  kustomize-path:
+    type: string
+  namespace:
+    type: string
+  deployment-resource-name:
+    default: deployment/app
+    type: string
+
+steps:
+  - checkout
+  - determine-docker-tag
+
+  - aws-cli/setup:
+      role-arn: $IAM_ROLE_ARN
+      aws-region: AWS_REGION
+  - run:
+      name: 'Install Kustomize'
+      command: |
+        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+        sudo mv kustomize /usr/local/bin
+
+  - run:
+      name: 'Build Deployment Manifest'
+      command: |
+        cd <<parameters.kustomize-path>>
+        kustomize edit set image <<parameters.image-name>>:$DOCKER_TAG
+        kustomize build . > deploy-manifest.yaml
+        cd
+  - aws-eks/update-kubeconfig-with-authenticator:
+      cluster-name: << parameters.cluster-name >>
+      install-aws-cli: false
+      install-kubectl: true
+      aws-region: $AWS_REGION
+
+  # Deploy
+  # - run:
+  #     name: Deploy configuration to Kubernetes
+  #     command: ${HOME}/kube-apply.sh << parameters.kube-path >><< parameters.environment >> << parameters.app-name >>-<< parameters.environment >>
+
+  # # Conditionally wait for rollout to complete
+  # - when:
+  #     condition: << parameters.wait-for-rollout >>
+  #     steps:
+  #       - monitor-deployment:
+  #           maxAttempts: 30
+  #           kubernetesNamespace: << parameters.app-name >>-<< parameters.environment >>
+  #           kubernetesDeployment: << parameters.app-name >>-<< parameters.environment >>
+
+
+  # Conditionally wait for rollout to complete
+  - when:
+      condition:
+        equal: [<< parameters.wait-for-rollout >>, true]
+      steps:
+        - kubernetes/create-or-update-resource:
+            namespace: << parameters.namespace >>
+            get-rollout-status: true
+            watch-rollout-status: true
+            resource-file-path: <<parameters.kustomize-path>>/deploy-manifest.yaml
+            resource-name: <<parameters.deployment-resource-name>> # Name of the deployment to be used for tracking rollout status
+
+  - when:
+      condition:
+        equal: [<< parameters.wait-for-rollout >>, false]
+      steps:
+        - kubernetes/create-or-update-resource:
+            namespace: << parameters.namespace >>
+            get-rollout-status: true
+            watch-rollout-status: false
+            resource-file-path: <<parameters.kustomize-path>>/deploy-manifest.yaml
+            resource-name: <<parameters.deployment-resource-name>> # Name of the deployment to be used for tracking rollout status
+
+  - steps: << parameters.post-deploy-steps >>
+
