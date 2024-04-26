@@ -1,16 +1,6 @@
 description: Deploy an image to kubernetes via kustomize
 
 parameters:
-  # kube-path:
-  #   type: string
-  #   default: .kube/
-  # environment:
-  #   type: string
-  # notification-channel:
-  #   type: string
-  #   default:
-  # app-name:
-  #   type: string
   wait-for-rollout:
     type: boolean
     default: true
@@ -28,6 +18,9 @@ parameters:
   deployment-resource-name:
     default: deployment/app
     type: string
+  notification-channel:
+    type: string
+    default:
 
 steps:
   - checkout
@@ -95,3 +88,16 @@ steps:
 
   - steps: << parameters.post-deploy-steps >>
 
+
+  # Notify deploy, Using basic slack notification until a custom one can be created.
+  - when:
+      condition: << parameters.notification-channel >>
+      steps:
+        - slack/notify:
+            channel: << parameters.notification-channel >>
+            event: pass
+            template: basic_success_1
+        - slack/notify:
+            channel: << parameters.notification-channel >>
+            event: fail
+            template: basic_fail_1
