@@ -48,21 +48,6 @@ steps:
       install-kubectl: true
       aws-region: $AWS_REGION
 
-  # Deploy
-  # - run:
-  #     name: Deploy configuration to Kubernetes
-  #     command: ${HOME}/kube-apply.sh << parameters.kube-path >><< parameters.environment >> << parameters.app-name >>-<< parameters.environment >>
-
-  # # Conditionally wait for rollout to complete
-  # - when:
-  #     condition: << parameters.wait-for-rollout >>
-  #     steps:
-  #       - monitor-deployment:
-  #           maxAttempts: 30
-  #           kubernetesNamespace: << parameters.app-name >>-<< parameters.environment >>
-  #           kubernetesDeployment: << parameters.app-name >>-<< parameters.environment >>
-
-
   # Conditionally wait for rollout to complete
   - when:
       condition:

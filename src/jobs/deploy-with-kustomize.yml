@@ -39,19 +39,3 @@ steps:
       post-deploy-steps: << parameters.post-deploy-steps >>
       deployment-resource-name: << parameters.deployment-resource-name >>
       notification-channel: << parameters.notification-channel >>
-
-      # - goodway-deploy-with-kustomize:
-      #     name: deploy-staging
-      #     context:
-      #       - aws-oidc
-      #       - aws-ecr
-      #     cluster-name: goodway-staging
-      #     image-name: $AWS_ECR_REGISTRY_URL/microservice/test-vite
-      #     kustomize-path: .kube/overlays/staging
-      #     namespace: test-vite-staging
-      #     deployment-app-name: ui
-      #     requires:
-      #       - build
-      #     filters:
-      #       branches:
-      #         only: /^(main|release|hotfix|staging).*/
