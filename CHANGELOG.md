@@ -1,3 +1,10 @@
+# [2.8.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.7.2...v2.8.0) (2024-06-17)
+
+
+### Features
+
+* adding deploy-with-kustomize job & command ([#87](https://github.com/GoodwayGroup/circleci-orb/issues/87)) ([7272da2](https://github.com/GoodwayGroup/circleci-orb/commit/7272da2a5579cd79ad6342a9c4f39bf59b55599e))
+
 ## [2.7.2](https://github.com/GoodwayGroup/circleci-orb/compare/v2.7.1...v2.7.2) (2023-08-09)
 
 ## [2.7.1](https://github.com/GoodwayGroup/circleci-orb/compare/v2.7.0...v2.7.1) (2023-07-26)
