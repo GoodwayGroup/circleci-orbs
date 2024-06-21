@@ -80,3 +80,4 @@ steps:
       lint: << parameters.lint >>
       lint-steps: << parameters.lint-steps >>
       tar-coverage-artifacts-path: << parameters.tar-coverage-artifacts-path >>
+      store-coverage-artifacts: << parameters.store-coverage-artifacts >>
