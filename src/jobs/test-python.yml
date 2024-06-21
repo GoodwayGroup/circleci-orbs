@@ -4,6 +4,18 @@ parameters:
   executor-tag:
     type: string
     default: "3.7"
+  executor-resource-class:
+    default: large
+    description: Configure the executor resource class
+    enum:
+      - small
+      - medium
+      - medium+
+      - large
+      - xlarge
+      - 2xlarge
+      - 2xlarge+
+    type: enum
   cache-key:
     type: string
     default: v0-dependencies
@@ -58,6 +70,7 @@ parameters:
 executor:
   name: python-default
   tag: << parameters.executor-tag >>
+  resource_class: << parameters.executor-resource-class >>
 
 steps:
   - test-python:

@@ -70,6 +70,7 @@ parameters:
 executor:
   name: python-default
   tag: << parameters.executor-tag >>
+  resource_class: << parameters.executor-resource-class >>
 
 steps:
   - test-python:
