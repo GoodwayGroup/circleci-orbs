@@ -1,3 +1,10 @@
+## [2.8.1](https://github.com/GoodwayGroup/circleci-orb/compare/v2.8.0...v2.8.1) (2024-06-24)
+
+
+### Bug Fixes
+
+* test-python and deploy-with-kustomize job ([#88](https://github.com/GoodwayGroup/circleci-orb/issues/88)) ([f9dfcf1](https://github.com/GoodwayGroup/circleci-orb/commit/f9dfcf1e47831ceecb53a6179b9fd2c5a6c1514c))
+
 # [2.8.0](https://github.com/GoodwayGroup/circleci-orb/compare/v2.7.2...v2.8.0) (2024-06-17)
 
 
