@@ -23,19 +23,38 @@ parameters:
   notification-channel:
     type: string
     default:
-
+  cluster-name:
+    type: string
+    default:
 
 executor:
   name: python-default
   tag: << parameters.executor-tag >>
 
 steps:
-  - deploy-with-kustomize:
-      cluster-name: goodway-<< parameters.environment >>
-      image-name: $AWS_ECR_REGISTRY_URL/microservice/<< parameters.app-name >>
-      kustomize-path: << parameters.kube-path >>/overlays/<< parameters.environment >>
-      namespace: << parameters.app-name >>-<< parameters.environment >>
-      wait-for-rollout: << parameters.wait-for-rollout >>
-      post-deploy-steps: << parameters.post-deploy-steps >>
-      deployment-resource-name: << parameters.deployment-resource-name >>
-      notification-channel: << parameters.notification-channel >>
+
+  - unless:
+      condition: << parameters.cluster-name >>
+      steps:
+        - deploy-with-kustomize:
+            cluster-name: goodway-<< parameters.environment >>
+            image-name: $AWS_ECR_REGISTRY_URL/microservice/<< parameters.app-name >>
+            kustomize-path: << parameters.kube-path >>/overlays/<< parameters.environment >>
+            namespace: << parameters.app-name >>-<< parameters.environment >>
+            wait-for-rollout: << parameters.wait-for-rollout >>
+            post-deploy-steps: << parameters.post-deploy-steps >>
+            deployment-resource-name: << parameters.deployment-resource-name >>
+            notification-channel: << parameters.notification-channel >>
+  - when:
+      condition: << parameters.cluster-name >>
+      steps:
+        - deploy-with-kustomize:
+            cluster-name: << parameters.cluster-name >>
+            image-name: $AWS_ECR_REGISTRY_URL/microservice/<< parameters.app-name >>
+            kustomize-path: << parameters.kube-path >>/overlays/<< parameters.environment >>
+            namespace: << parameters.app-name >>-<< parameters.environment >>
+            wait-for-rollout: << parameters.wait-for-rollout >>
+            post-deploy-steps: << parameters.post-deploy-steps >>
+            deployment-resource-name: << parameters.deployment-resource-name >>
+            notification-channel: << parameters.notification-channel >>
+

@@ -70,6 +70,7 @@ parameters:
 executor:
   name: python-default
   tag: << parameters.executor-tag >>
+  resource_class: << parameters.executor-resource-class >>
 
 steps:
   - test-python:
@@ -80,3 +81,4 @@ steps:
       lint: << parameters.lint >>
       lint-steps: << parameters.lint-steps >>
       tar-coverage-artifacts-path: << parameters.tar-coverage-artifacts-path >>
+      store-coverage-artifacts: << parameters.store-coverage-artifacts >>
