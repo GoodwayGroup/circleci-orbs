@@ -29,6 +29,11 @@ parameters:
     type: steps
     default:
       - run: npm test
+  package-lock-filename:
+    type: string
+    default: package-lock.json
+    description: |
+      The package lock file to use for caching dependencies; npm should use package-lock.json, pnpm should use pnpm-lock.yaml, etc.
   lint:
     default: true
     description: |
@@ -71,3 +76,4 @@ steps:
       store-coverage-artifacts: << parameters.store-coverage-artifacts >>
       tar-coverage-artifacts: << parameters.tar-coverage-artifacts >>
       use-remote-docker: << parameters.use-remote-docker >>
+      package-lock-filename: << parameters.package-lock-filename >>
