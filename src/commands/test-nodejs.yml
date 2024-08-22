@@ -11,6 +11,11 @@ parameters:
     type: steps
     default:
       - run: npm test
+  package-lock-filename:
+    type: string
+    default: package-lock.json
+    description: |
+      The package lock file to use for caching dependencies; npm should use package-lock.json, pnpm should use pnpm-lock.yaml, etc.
   lint:
     default: true
     description: |
@@ -49,14 +54,14 @@ steps:
   # Download and cache dependencies
   - restore_cache:
       keys:
-        - << parameters.cache-key >>-{{ checksum "package-lock.json" }}
+        - << parameters.cache-key >>-{{ checksum "<< parameters.package-lock-filename >>" }}
 
   - npm-install-or-ci
 
   - save_cache:
       paths:
         - node_modules
-      key: << parameters.cache-key >>-{{ checksum "package-lock.json" }}
+      key: << parameters.cache-key >>-{{ checksum "<< parameters.package-lock-filename >>" }}
 
   - when:
       condition: <<parameters.lint>>
