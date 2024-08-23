@@ -54,14 +54,14 @@ steps:
   # Download and cache dependencies
   - restore_cache:
       keys:
-        - << parameters.cache-key >>-{{ checksum << parameters.package-lock-filename >> }}
+        - << parameters.cache-key >>-{{ checksum "<< parameters.package-lock-filename >>" }}
 
   - npm-install-or-ci
 
   - save_cache:
       paths:
         - node_modules
-      key: << parameters.cache-key >>-{{ checksum << parameters.package-lock-filename >> }}
+      key: << parameters.cache-key >>-{{ checksum "<< parameters.package-lock-filename >>" }}
 
   - when:
       condition: <<parameters.lint>>
