@@ -1,3 +1,10 @@
+## [2.9.1](https://github.com/GoodwayGroup/circleci-orb/compare/v2.9.0...v2.9.1) (2024-08-23)
+
+
+### Bug Fixes
+
+* Adds quotes around parameter in mustache braces ([#90](https://github.com/GoodwayGroup/circleci-orb/issues/90)) ([bc69771](https://github.com/GoodwayGroup/circleci-orb/commit/bc69771e83acf51781a3c0238899830e58f924a8))
+
 ## [2.8.1](https://github.com/GoodwayGroup/circleci-orb/compare/v2.8.0...v2.8.1) (2024-06-24)
 
 
