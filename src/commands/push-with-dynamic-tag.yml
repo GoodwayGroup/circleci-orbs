@@ -17,7 +17,7 @@ parameters:
     description: 'Image tag environment variable, defaults to CIRCLE_SHA1'
     type: env_var_name
 steps:
-  - deploy:
+  - run:
       command: >
         docker push <<parameters.registry>>/<<
         parameters.image>> --all-tags
