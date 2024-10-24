@@ -1,3 +1,10 @@
+## [2.9.2](https://github.com/GoodwayGroup/circleci-orb/compare/v2.9.1...v2.9.2) (2024-10-24)
+
+
+### Bug Fixes
+
+* replaced deprecated deploy step with run ([#92](https://github.com/GoodwayGroup/circleci-orb/issues/92)) ([0b94a4d](https://github.com/GoodwayGroup/circleci-orb/commit/0b94a4da1c03d9e3601b7d4768d9832b010f8f92))
+
 ## [2.9.1](https://github.com/GoodwayGroup/circleci-orb/compare/v2.9.0...v2.9.1) (2024-08-23)
 
 
